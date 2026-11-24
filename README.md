@@ -32,6 +32,7 @@ flowchart LR
 - ✅ 認出題型（是非 / 單選 / 複選 / 填充 / 問答）
 - ✅ 拆好題目、選項、答案、解說
 - ✅ 排成題庫系統要的 27 欄格式
+- ✅ 擋下答案缺漏、答案編號超過選項數等格式錯誤
 - ✅ 編碼一律 UTF-8（另附 Big5 版給舊系統）
 - ✅ 可依章節標題填「類別」
 
@@ -218,6 +219,9 @@ python build.py --tsv rows.tsv --out exam02.csv --category "綠色能源" --big5
 
 # 各題依章節填不同類別（.cats 一行一個，行數需等於題數）
 python build.py --tsv rows.tsv --out exam02.csv --category-file rows.cats --big5
+
+# 題目檢查有錯時會全部列出並停止；確定要照樣輸出才加 --allow-invalid
+python build.py --tsv rows.tsv --out exam02.csv --allow-invalid
 
 # 從 docx 取出純文字
 python extract.py 題目.docx -o 題目.txt

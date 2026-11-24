@@ -89,6 +89,13 @@ python build.py --tsv <rows.tsv> --out <examNN.csv> --category-file <rows.cats> 
 - 在 skill 目錄下執行；`--header` 可選，預設用同目錄的 `header.csv`。
 - `--category` 與 `--category-file` 互斥；`.cats` 行數與 TSV 列數不符會直接報錯，不會產生半套輸出。
 
+**題目檢查**：寫檔前會逐題檢查，有錯就全部列出（`INVALID question N: ...`）並停止，不產生任何檔案。
+- 檢查項目：題型、題目空白、難易度、答案缺漏或指向不存在的選項、填充題格式、欄位過多。
+- `WARN question N` 為可疑但允許（複選只有一個答案、問答沒有參考答案），照常輸出，但要回報使用者。
+- 收到 `INVALID` 時先核對原始檔：是解析錯誤就修正 TSV；**原稿本身缺答案或矛盾時，列出題號請使用者確認，不得自行猜補答案**。
+- 只有使用者同意保留有問題的題目時，才加 `--allow-invalid` 輸出，並在回報中列出這些題號。
+- 格式正確但答案錯誤的題目檢查不出來，仍須與原稿核對。
+
 **Big5 副本**：加 `--big5` 會同時輸出 `examNN_big5.csv`（cp950，給只吃 Big5 的舊測驗系統）。
 - 命名規則：在副檔名前插入 `_big5`（`exam02.csv` → `exam02_big5.csv`）。可用 `--big5-out <路徑>` 自訂。
 - Big5 字集較小：引擎會把 `≥`→`≧`、`≤`→`≦`、`・`→`‧` 做等義替換；若仍有無法表示的字元，會以 `?` 寫入並印出 `WARN ... UNMAPPABLE`，需回報使用者並考慮改寫該字。
@@ -102,7 +109,7 @@ python build.py --tsv <rows.tsv> --out <examNN.csv> --category-file <rows.cats> 
 ## 檔案
 - `build.py` — **轉換引擎（主要）**；跨平台，Python 3.7+。
 - `extract.py` — docx／txt／md 取文字；跨平台，Python 3.7+。
-- `build.ps1` — 舊版 Windows PowerShell 引擎，保留供既有流程相容；新流程一律用 `build.py`（不支援 `--category-file`）。
+- `build.ps1` — 舊版 Windows PowerShell 引擎，保留供既有流程相容；新流程一律用 `build.py`（`build.ps1` 不支援 `--category-file`，也沒有題目檢查）。
 - `header.csv` — 題庫範本 27 欄表頭（version 行 + 標題列）。
 - `examples/` — 可放範例。
 
