@@ -62,6 +62,14 @@ flowchart LR
 | OpenAI **Codex** | ✅ 已安裝 |
 | Google **Gemini CLI** | ✅ 已安裝 |
 
+不想安裝程式，也可以直接在瀏覽器使用，各有獨立的安裝與操作說明（[總覽與比較](web/README.md)）：
+
+| AI 網頁版 | 說明 |
+|---------|------|
+| **Claude Web** | [安裝與操作](web/claude-web.md)（免費帳號可用） |
+| **ChatGPT Web** | [安裝與操作](web/chatgpt-web.md)（技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式） |
+| **Gemini Web** | [安裝與操作](web/gemini-web.md)（技能限個人帳號，學校帳號尚未開放） |
+
 不綁單一廠商——換工具不必重做，操作指令也相同。
 技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，clone 後執行一行安裝指令即可（見〈技能安裝與同步〉）。
 
@@ -177,6 +185,7 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 1. 改 `skill/exam-to-qb/` 底下的檔案（正本）
 2. commit + push
 3. 複製模式：重跑安裝腳本；連結模式：不必做任何事
+4. 網頁版：執行 `python web/pack.py` 重新打包，再 commit + push
 
 ### 各工具的技能目錄對照
 
@@ -224,6 +233,7 @@ QB/
 ├── exam.csv                  題庫範本（UTF-8 no BOM）
 ├── exam_big5.csv             範本 Big5 版
 ├── skill/                    技能正本（exam-to-qb）與安裝腳本
+├── web/                      Claude／ChatGPT／Gemini 網頁版的說明、安裝檔（dist/）與原稿（archive/）
 ├── 題庫/                     已完成的題庫、原始題目檔與中繼檔
                               （只有 exam* 開頭的範例檔入庫，其餘僅保留本機，見 .gitignore）
 └── 第四屆校務創新創意實踐典範競賽/  競賽用工作目錄（不入庫）

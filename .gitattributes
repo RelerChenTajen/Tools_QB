@@ -9,6 +9,7 @@
 *.docx -text
 *.mp4  -text
 *.pdf  -text
+*.zip  -text
 
 # shell 腳本在 macOS/Linux 必須是 LF，否則 /bin/bash 會因 ^M 無法執行
 *.sh text eol=lf
