@@ -8,13 +8,13 @@
 > **把「老師手上的考題檔」變成「系統吃得下的題庫檔」。**
 
 ```
-   📄 考題檔                 🤖 交給 Claude                📊 題庫 CSV
+   📄 考題檔                 🤖 交給 AI 助理               📊 題庫 CSV
   Word / PDF / md   ──▶  「請把 xxx 轉成題庫」  ──▶   直接匯入題庫系統
 ```
 
 ```mermaid
 flowchart LR
-    A["📄 考題檔<br/>(.docx / .pdf / .md)"] --> B["🤖 Claude<br/>exam-to-qb"]
+    A["📄 考題檔<br/>(.docx / .pdf / .md)"] --> B["🤖 AI 助理<br/>exam-to-qb"]
     B --> C["📊 題庫 CSV<br/>UTF-8"]
     B --> D["📊 題庫 CSV<br/>Big5 副本"]
     C --> E["🏫 匯入題庫系統"]
@@ -24,9 +24,9 @@ flowchart LR
 ### 你只要做三件事
 | 步驟 | 動作 | 例子 |
 |:--:|------|------|
-| 1️⃣ | 把考題檔放進 `題庫/` | `題庫/exam02.docx` |
-| 2️⃣ | 跟 Claude 說一句話 | `請把 題庫/exam02.docx 轉成題庫` |
-| 3️⃣ | 拿走產生的 CSV 匯入系統 | `題庫/exam02.csv` |
+| 1️⃣ | 把考題檔放進 `題庫/`（網頁版：附加到對話） | `題庫/exam02.docx` |
+| 2️⃣ | 跟 AI 說一句話 | `請把 題庫/exam02.docx 轉成題庫` |
+| 3️⃣ | 核對後，把產生的 CSV 匯入系統 | `題庫/exam02.csv` |
 
 ### 它會幫你處理的雜事
 - ✅ 認出題型（是非 / 單選 / 複選 / 填充 / 問答）
@@ -52,33 +52,30 @@ flowchart LR
 
 > 只有 `exam*` 範例檔入庫，其餘題庫僅保留在本機。
 
-### 三種 AI 環境都能用
+### 三家 AI、兩種用法
 
-本專案的技能依循 [Agent Skills 開放標準](https://agentskills.io) 撰寫，同一份技能可安裝在三家主流 AI 工具下，轉換引擎為 Python（無第三方套件），Windows／macOS／Linux 皆可執行：
+本專案的技能依循 [Agent Skills 開放標準](https://agentskills.io) 撰寫，同一份技能可用在三家主流 AI。轉換引擎為 Python（無第三方套件），Windows／macOS／Linux 皆可執行。
 
-| AI 環境 | 狀態 |
-|---------|------|
-| Anthropic **Claude Code** | ✅ 已安裝 |
-| OpenAI **Codex** | ✅ 已安裝 |
-| Google **Gemini CLI** | ✅ 已安裝 |
+| 廠商 | 網頁版（不必安裝程式） | 本機工具（命令列） |
+|------|------------------------|--------------------|
+| Anthropic | [**Claude Web**](web/claude-web.md)：免費帳號可用 | **Claude Code** |
+| OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式 | **Codex** |
+| Google | [**Gemini Web**](web/gemini-web.md)：技能限滿 18 歲的個人帳號，學校帳號尚未開放 | **Gemini CLI** |
 
-不想安裝程式，也可以直接在瀏覽器使用，各有獨立的安裝與操作說明（[總覽與比較](web/README.md)）：
+- **一般教師**：建議從網頁版開始，先看[網頁版總覽與比較](web/README.md)。
+- **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
-| AI 網頁版 | 說明 |
-|---------|------|
-| **Claude Web** | [安裝與操作](web/claude-web.md)（免費帳號可用） |
-| **ChatGPT Web** | [安裝與操作](web/chatgpt-web.md)（技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式） |
-| **Gemini Web** | [安裝與操作](web/gemini-web.md)（技能限個人帳號，學校帳號尚未開放） |
+> 網頁版的安裝檔已測試與正本輸出一致；三家網頁的實際上傳安裝尚未實測（2026-11-24）。
 
-不綁單一廠商——換工具不必重做，操作指令也相同。
-技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，clone 後執行一行安裝指令即可（見〈技能安裝與同步〉）。
+不綁單一廠商——換工具不必重做，轉換規則與輸出格式都相同。
+技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP 即可（見〈技能安裝與同步〉）。
 
 ---
 
 # 詳細使用說明
 
 把使用者提供的題目檔案（Word / PDF / 純文字等）轉成可匯入的題庫 CSV，並可同時輸出 Big5 副本。
-背後由 `exam-to-qb` skill 自動處理，可在 Claude Code、OpenAI Codex、Gemini CLI 三種環境下運作（安裝位置見下方〈技能安裝與同步〉）。
+背後由 `exam-to-qb` skill 自動處理，可用於 Claude Code、OpenAI Codex、Gemini CLI，以及 Claude、ChatGPT、Gemini 網頁版（安裝方式見下方〈技能安裝與同步〉）。
 
 ## 編碼約定
 - 主檔一律 **UTF-8 (no BOM)**。
@@ -87,12 +84,14 @@ flowchart LR
 
 ## 如何下 prompt
 
+以下範例適用本機工具。網頁版請先附加檔案，把檔名改說成「附件」，並加上「請使用 exam-to-qb 技能」；完整範本見[網頁版總覽](web/README.md#提示詞範本)。
+
 ### 1. 轉換新題目檔（最常用）
 ```
 請把 exam02.docx 轉成題庫 exam02.csv
 ```
 會自動詢問：①是否填入「類別」欄、②是否要 Big5 副本。
-也可用斜線指令：
+在 Claude Code 也可用斜線指令：
 ```
 /exam-to-qb exam02.docx
 ```
@@ -134,7 +133,19 @@ exam02.csv 第 5 題答案改成 (C)，並更新解說
 
 ## 技能安裝與同步
 
-技能本體就放在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，是**唯一正本**；各 AI 工具讀取的家目錄位置由安裝腳本佈署。
+技能本體就放在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，是**唯一正本**；本機工具由安裝腳本佈署到家目錄，網頁版則上傳由正本打包的 ZIP。
+
+### 網頁版：上傳 ZIP
+
+| AI 網頁版 | 安裝檔（下載後不要解壓縮） | 安裝步驟 |
+|-----------|---------------------------|----------|
+| Claude | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [claude-web.md](web/claude-web.md) |
+| ChatGPT | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
+| Gemini | [`exam-to-qb-gemini.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip) | [gemini-web.md](web/gemini-web.md) |
+
+不要用 GitHub 的「Download ZIP」，那是整個專案，不是技能安裝檔。
+
+### 本機工具：安裝位置
 
 | 路徑 | 供哪些工具讀取 |
 |------|---------------|
@@ -144,10 +155,10 @@ exam02.csv 第 5 題答案改成 (C)，並更新解說
 
 > Claude Code 只掃 `~/.claude/skills/` 與專案內的 `.claude/skills/`，不讀 `~/.agents/skills/`，所以要佈署到兩個位置。
 
-### 安裝（新電腦或其他教師）
+### 本機工具：安裝（新電腦或其他教師）
 
 ```bash
-git clone git@github.com:RelerChenTajen/Tools_QB.git
+git clone https://github.com/RelerChenTajen/Tools_QB.git
 cd Tools_QB/skill
 ```
 
@@ -172,7 +183,7 @@ cd Tools_QB/skill
 | **複製**（預設） | 最保險，任何環境都可用 | 改了 repo 的技能要重跑安裝腳本 |
 | **連結** | `git pull` 後立即生效，不會有版本漂移 | 需要 repo 一直放在原位置；Windows 用 `mklink /J`，免系統管理員權限 |
 
-### 驗證安裝成功
+### 本機工具：驗證安裝成功
 
 ```bash
 python ~/.agents/skills/exam-to-qb/build.py --help
@@ -185,9 +196,9 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 1. 改 `skill/exam-to-qb/` 底下的檔案（正本）
 2. commit + push
 3. 複製模式：重跑安裝腳本；連結模式：不必做任何事
-4. 網頁版：執行 `python web/pack.py` 重新打包，再 commit + push
+4. 網頁版：執行 `python web/pack.py` 重新打包並 commit + push，再通知使用者重新上傳（網頁版不會自動更新）
 
-### 各工具的技能目錄對照
+### 本機工具：技能目錄對照
 
 | 工具 | 個人層級 | 專案層級 |
 |------|---------|---------|
@@ -233,7 +244,14 @@ QB/
 ├── exam.csv                  題庫範本（UTF-8 no BOM）
 ├── exam_big5.csv             範本 Big5 版
 ├── skill/                    技能正本（exam-to-qb）與安裝腳本
-├── web/                      Claude／ChatGPT／Gemini 網頁版的說明、安裝檔（dist/）與原稿（archive/）
+├── web/                      網頁版（Claude／ChatGPT／Gemini）
+│   ├── README.md             總覽、比較與共用檢查項目
+│   ├── claude-web.md         Claude 安裝與操作
+│   ├── chatgpt-web.md        ChatGPT 安裝與操作
+│   ├── gemini-web.md         Gemini 安裝與操作
+│   ├── pack.py               由正本打包 ZIP
+│   ├── dist/                 安裝檔 ZIP
+│   └── archive/              原始稿（僅供參考，請勿用來安裝）
 ├── 題庫/                     已完成的題庫、原始題目檔與中繼檔
                               （只有 exam* 開頭的範例檔入庫，其餘僅保留本機，見 .gitignore）
 └── 第四屆校務創新創意實踐典範競賽/  競賽用工作目錄（不入庫）
@@ -243,7 +261,8 @@ QB/
 | 檔案 | 編碼 | 說明 |
 |------|------|------|
 | `exam.docx` | — | exam01 原始題目檔 |
-| `exam_text.txt` / `rows.tsv` | UTF-8 | exam01 抽取文字與 TSV 中繼檔 |
+| `exam_text.txt` | UTF-8 | exam01 抽取文字 |
+| `rows.tsv` | UTF-8 | exam01 TSV 中繼檔（本機） |
 | `exam01.csv` | UTF-8 (no BOM) | 範例題庫（資訊圖表，12 題，類別=綠色能源） |
 | `exam01_big5.csv` | Big5 | 範例題庫 Big5 版 |
 | `AI 基礎概論測驗.md` | UTF-8 | AI_chap1 原始題目檔（本機） |
