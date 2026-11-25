@@ -28,7 +28,7 @@ flowchart LR
 | 2️⃣ | 跟 AI 說一句話 | `請用 exam-to-qb 技能把附件轉成題庫 CSV，類別：資訊安全`（各家說法見〈如何下 prompt〉） | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
 | 3️⃣ | 核對後匯入題庫系統 | 下載的 CSV | `題庫/sample.csv` |
 
-第一次使用要先安裝技能（ChatGPT 網頁版免安裝），見〈技能安裝與同步〉。
+第一次使用要先安裝技能（ChatGPT 為建立私人外掛，或免安裝改用附件），見〈技能安裝與同步〉。
 
 ### 它會幫你處理的雜事
 - ✅ 認出題型（是非 / 單選 / 複選 / 填充 / 問答）
@@ -66,13 +66,13 @@ flowchart LR
 
 | | Claude Web | ChatGPT Web | Gemini Web |
 |---|---|---|---|
-| 使用方式 | 安裝技能一次 | 免安裝，每次附上 ZIP 與考題 | 安裝技能一次 |
+| 使用方式 | 安裝技能一次 | 建立私人外掛一次（Plus），或每次附上 ZIP 與考題 | 安裝技能一次 |
 | 已實測的帳號 | 付費帳號 | Plus | 個人 Google 帳號 |
 | 尚未實測的帳號 | 免費帳號（官方說明可用） | 免費與其他方案 | 學校帳號（尚未開放技能） |
 | CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
 | 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
 | Big5 版 | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | 用記事本另存 ANSI（未實測） |
-| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 逐位元相同 | 各格內容相同 |
+| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 附件方式逐位元相同；私人外掛尚未核對 | 各格內容相同 |
 
 - **有個人 Google 帳號**：用 Gemini Web，匯入前請逐題核對。
 - **重要考試或需要格式檢查**：用 Claude Web（付費帳號）、ChatGPT Web（Plus）或本機工具。
@@ -103,7 +103,8 @@ flowchart LR
 | AI | 輸入 |
 |----|------|
 | Claude | `請使用 exam-to-qb 技能，把附件轉成題庫 CSV，類別填「資訊安全」，並產生 Big5 版。` |
-| ChatGPT | 另附 `exam-to-qb.zip`，輸入 `請解壓縮 exam-to-qb.zip，閱讀 SKILL.md，依其流程把考題檔轉成題庫 CSV。類別填「資訊安全」，並產生 Big5 版。請實際執行 build.py 產生檔案。` |
+| ChatGPT（私人外掛） | 在 Work 輸入 `@` 選「考題轉題庫 CSV」，再輸入 `請將上傳的考題轉成 27 欄題庫 CSV，類別填「資訊安全」。請實際執行 build.py，並提供 UTF-8 無 BOM 與 Big5（CP950）兩個版本的下載檔。` |
+| ChatGPT（附件） | 另附 `exam-to-qb.zip`，輸入 `請解壓縮 exam-to-qb.zip，閱讀 SKILL.md，依其流程把考題檔轉成題庫 CSV。類別填「資訊安全」，並產生 Big5 版。請實際執行 build.py 產生檔案。` |
 | Gemini | 輸入 `@` 選 `exam-to-qb`，再輸入 `請把附件轉成題庫 CSV，類別：資訊安全` |
 
 各平台的修改與補救說法，見各自的[操作說明](web/README.md)。
@@ -164,7 +165,7 @@ flowchart LR
 | AI 網頁版 | 上傳用的 ZIP（不要解壓縮） | 步驟 |
 |-----------|---------------------------|----------|
 | Claude | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [claude-web.md](web/claude-web.md) |
-| ChatGPT（免安裝，每次附上） | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
+| ChatGPT（建立私人外掛，或每次附上） | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
 | Gemini | [`exam-to-qb-gemini.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip) | [gemini-web.md](web/gemini-web.md) |
 
 不要用 GitHub 的「Download ZIP」，那是整個專案，不是技能安裝檔。
@@ -284,7 +285,7 @@ Tools_QB/
 ├── web/                      網頁版（Claude／ChatGPT／Gemini）
 │   ├── README.md             總覽、比較與共用檢查項目
 │   ├── claude-web.md         Claude 安裝與操作
-│   ├── chatgpt-web.md        ChatGPT 操作（免安裝）
+│   ├── chatgpt-web.md        ChatGPT 私人外掛與附件方式
 │   ├── gemini-web.md         Gemini 安裝與操作
 │   ├── gemini/               Gemini 專用技能範本
 │   ├── pack.py               由正本打包 ZIP
