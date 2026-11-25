@@ -24,9 +24,9 @@ flowchart LR
 ### 你只要做三件事
 | 步驟 | 動作 | 例子 |
 |:--:|------|------|
-| 1️⃣ | 把考題檔放進 `題庫/`（網頁版：附加到對話） | `題庫/exam02.docx` |
-| 2️⃣ | 跟 AI 說一句話 | `請把 題庫/exam02.docx 轉成題庫` |
-| 3️⃣ | 核對後，把產生的 CSV 匯入系統 | `題庫/exam02.csv` |
+| 1️⃣ | 準備考題檔（網頁版：附加到對話） | `sample.docx` |
+| 2️⃣ | 跟 AI 說一句話 | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
+| 3️⃣ | 核對後，把產生的 CSV 匯入系統 | `題庫/sample.csv` |
 
 ### 它會幫你處理的雜事
 - ✅ 認出題型（是非 / 單選 / 複選 / 填充 / 問答）
@@ -36,37 +36,34 @@ flowchart LR
 - ✅ 編碼一律 UTF-8（另附 Big5 版給舊系統）
 - ✅ 可依章節標題填「類別」
 
-### 目前已完成的題庫
-| 題庫 | 題數 | 位置 |
-|------|:--:|------|
-| 資訊圖表（範例） | 12 | `題庫/exam01.csv` |
-| AI 基礎概論 第 1 章 | 20 | `題庫/AI_chap1.csv` |
-| AI 應用 第 3 章 | 40 | `題庫/AI_CH03.csv` |
-| 低碳生活與氣候公約 | 30 | `題庫/低碳生活與氣候公約測驗.csv` |
-| SDGs 永續發展 | 30 | `題庫/SDGs 永續發展測驗題庫.csv` |
-| 2050 淨零排放 | 20 | `題庫/2050淨零排放測驗.csv` |
-| 2050 淨零排放（5.1／5.2） | 40 | `題庫/2050淨零排放測驗 (1).csv` |
-| 農業淨零政策 | 25 | `題庫/農業淨零政策.csv` |
-| 綠色能源 | 45 | `題庫/七_綠色能源考題.csv` |
-| 碳足跡與溫室氣體 | 25 | `題庫/八_碳足跡與溫室氣體.csv` |
-| **合計 10 份** | **287** | |
+### 先用範例練習
 
-> 只有 `exam*` 範例檔入庫，其餘題庫僅保留在本機。
+根目錄附了一份練習用考題與轉換成果，主題「資訊安全」，共 9 題，五種題型都有：
+
+| 檔案 | 用途 |
+|------|------|
+| [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) | 範例考題，轉換的來源 |
+| [`sample.csv`](sample.csv) | 轉換成果（UTF-8 無 BOM，類別「資訊安全」） |
+| [`sample_big5.csv`](sample_big5.csv) | 轉換成果的 Big5 版 |
+| [`sample.tsv`](sample.tsv) | 中間檔，也是 Gemini 網頁版應產生的內容 |
+
+下面的操作都以 `sample.docx` 示範，成果輸出到 `題庫/sample.csv`，再與根目錄的 `sample.csv` 對照。
+各題的正確答案見[範例對照表](web/README.md#範例對照表)。
 
 ### 三家 AI、兩種用法
 
 本專案的技能依循 [Agent Skills 開放標準](https://agentskills.io) 撰寫，同一份技能可用在三家主流 AI。轉換引擎為 Python（無第三方套件），Windows／macOS／Linux 皆可執行。
 
-| 廠商 | 網頁版（不必安裝程式） | 本機工具（命令列） |
-|------|------------------------|--------------------|
+| 廠商 | 網頁版 | 本機工具（命令列） |
+|------|--------|--------------------|
 | Anthropic | [**Claude Web**](web/claude-web.md)：免費帳號可用 | **Claude Code** |
 | OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式 | **Codex** |
-| Google | [**Gemini Web**](web/gemini-web.md)：技能限滿 18 歲的個人帳號，學校帳號尚未開放 | **Gemini CLI** |
+| Google | [**Gemini Web**](web/gemini-web.md)：只產生 TSV，再用電腦上的 Python 轉 CSV；技能限滿 18 歲的個人帳號，學校帳號用附件方式 | **Gemini CLI** |
 
-- **一般教師**：建議從網頁版開始，先看[網頁版總覽與比較](web/README.md)。
+- **一般教師**：建議從 Claude Web 開始，比較請看[網頁版總覽](web/README.md)。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
-> 網頁版的安裝檔已測試與正本輸出一致；三家網頁的實際上傳安裝尚未實測（2026-11-24）。
+> Gemini Web 經實測不能執行技能裡的程式（2026-11-25），已改為純文字技能。各平台測試狀態見[網頁版總覽](web/README.md#查證與測試狀態2026-11-25)。
 
 不綁單一廠商——換工具不必重做，轉換規則與輸出格式都相同。
 技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP 即可（見〈技能安裝與同步〉）。
@@ -80,7 +77,7 @@ flowchart LR
 
 ## 編碼約定
 - 主檔一律 **UTF-8 (no BOM)**。
-- Big5 副本命名規則：副檔名前加 `_big5`，例如 `exam02.csv` → `exam02_big5.csv`。
+- Big5 副本命名規則：副檔名前加 `_big5`，例如 `sample.csv` → `sample_big5.csv`。
 - Big5 字集較小，轉換時會自動把 `≥`→`≧`、`≤`→`≦`；若仍有無法表示的字元會以 `?` 寫入並提出警告。
 
 ## 如何下 prompt
@@ -89,45 +86,45 @@ flowchart LR
 
 ### 1. 轉換新題目檔（最常用）
 ```
-請把 exam02.docx 轉成題庫 exam02.csv
+請把 sample.docx 轉成題庫 題庫/sample.csv
 ```
 會自動詢問：①是否填入「類別」欄、②是否要 Big5 副本。
 在 Claude Code 也可用斜線指令：
 ```
-/exam-to-qb exam02.docx
+/exam-to-qb sample.docx
 ```
 
 ### 2. 一次把條件講清楚（省去被反問）
 ```
-請把 exam02.docx 轉成題庫 exam02.csv，類別填「綠色能源」，並一併產生 Big5 版 exam02_big5.csv
+請把 sample.docx 轉成題庫 題庫/sample.csv，類別填「資訊安全」，並一併產生 Big5 版
 ```
 ```
-把 exam03.pdf 轉成題庫，不需要類別，也不用 Big5
+把 sample.docx 轉成題庫 題庫/sample.csv，不需要類別，也不用 Big5
 ```
 
 ### 3. 只要 Big5 副本 / 補轉舊檔
 ```
-請把 exam01.csv 另存一份 Big5 格式
+請把 題庫/sample.csv 另存一份 Big5 格式
 ```
 
 ### 4. 修訂已轉好的題庫
 ```
-請修訂 exam02.csv，把類別欄改成「資訊安全」
+請修訂 題庫/sample.csv，把類別欄改成「資安素養」
 ```
 ```
-exam02.csv 第 5 題答案改成 (C)，並更新解說
+題庫/sample.csv 第 4 題答案改成 (B)，並更新解說
 ```
 
 ### 5. 其他加工（CSV 完成後再要求）
 ```
-把 exam02.csv 也輸出成 Excel (.xlsx)
+把 題庫/sample.csv 也輸出成 Excel (.xlsx)
 ```
 ```
-把 exam02_big5.csv 轉回 UTF-8
+把 題庫/sample_big5.csv 轉回 UTF-8
 ```
 
 ## 下 prompt 小訣竅
-- 講明**來源檔名與輸出檔名**（如 `exam02.docx → exam02.csv`），不必猜。
+- 講明**來源檔名與輸出檔名**（如 `sample.docx → 題庫/sample.csv`），不必猜。
 - **先決定的事先講**（類別名稱、要不要 Big5），可省去中途反問。
 - 沒指定時預設：UTF-8 (no BOM)，並主動詢問類別與 Big5。
 - 支援來源格式：`.docx`、`.pdf`、`.txt`、`.md`、`.csv`（舊版 `.doc` 二進位檔建議先另存成 `.docx`）。
@@ -138,7 +135,7 @@ exam02.csv 第 5 題答案改成 (C)，並更新解說
 
 ### 網頁版：上傳 ZIP
 
-| AI 網頁版 | 安裝檔（下載後不要解壓縮） | 安裝步驟 |
+| AI 網頁版 | 上傳用的安裝檔（不要解壓縮） | 安裝步驟 |
 |-----------|---------------------------|----------|
 | Claude | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [claude-web.md](web/claude-web.md) |
 | ChatGPT | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
@@ -209,22 +206,27 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 
 ## 直接用指令跑引擎（不透過 AI）
 
-題目已整理成 TSV 時，可以略過 AI 直接跑引擎：
+題目已整理成 TSV 時，可以略過 AI 直接跑引擎。以下在 repo 根目錄執行，以範例檔示範：
 
 ```bash
-cd ~/.agents/skills/exam-to-qb
+# 從 docx 取出純文字
+python skill/exam-to-qb/extract.py sample.docx -o 題庫/sample.txt
 
 # 全部同一個類別
-python build.py --tsv rows.tsv --out exam02.csv --category "綠色能源" --big5
+python skill/exam-to-qb/build.py --tsv sample.tsv --out 題庫/sample.csv --category "資訊安全" --big5
 
+# 與成果檔對照，沒有任何輸出就是完全相同
+git diff --no-index sample.csv 題庫/sample.csv
+```
+
+其他用法：
+
+```bash
 # 各題依章節填不同類別（.cats 一行一個，行數需等於題數）
-python build.py --tsv rows.tsv --out exam02.csv --category-file rows.cats --big5
+python skill/exam-to-qb/build.py --tsv rows.tsv --out 題庫/my_exam.csv --category-file rows.cats --big5
 
 # 題目檢查有錯時會全部列出並停止；確定要照樣輸出才加 --allow-invalid
-python build.py --tsv rows.tsv --out exam02.csv --allow-invalid
-
-# 從 docx 取出純文字
-python extract.py 題目.docx -o 題目.txt
+python skill/exam-to-qb/build.py --tsv rows.tsv --out 題庫/my_exam.csv --allow-invalid
 ```
 
 ## 題庫 CSV 格式速查（27 欄）
@@ -245,52 +247,22 @@ python extract.py 題目.docx -o 題目.txt
 ```
 QB/
 ├── README.md                 本說明
-├── exam.csv                  題庫範本（UTF-8 no BOM）
-├── exam_big5.csv             範本 Big5 版
+├── sample.docx               範例考題（資訊安全，9 題）
+├── sample.tsv                範例的 TSV 中間檔
+├── sample.csv                範例轉換成果（UTF-8 no BOM）
+├── sample_big5.csv           範例轉換成果 Big5 版
+├── template/                 題庫系統的 CSV 範本 exam.csv 與 Big5 版
 ├── skill/                    技能正本（exam-to-qb）與安裝腳本
 ├── web/                      網頁版（Claude／ChatGPT／Gemini）
 │   ├── README.md             總覽、比較與共用檢查項目
 │   ├── claude-web.md         Claude 安裝與操作
 │   ├── chatgpt-web.md        ChatGPT 安裝與操作
 │   ├── gemini-web.md         Gemini 安裝與操作
+│   ├── gemini/               Gemini 專用技能範本
 │   ├── pack.py               由正本打包 ZIP
 │   ├── dist/                 安裝檔 ZIP
 │   └── archive/              原始稿（僅供參考，請勿用來安裝）
-├── 題庫/                     已完成的題庫、原始題目檔與中繼檔
-                              （只有 exam* 開頭的範例檔入庫，其餘僅保留本機，見 .gitignore）
+├── 題庫/                     轉換後的題庫、原始題目檔與中繼檔，新轉換的一律放這裡
+│                             （只有 exam* 開頭的檔案入庫，其餘僅保留本機，見 .gitignore）
 └── 第四屆校務創新創意實踐典範競賽/  競賽用工作目錄（不入庫）
 ```
-
-## 題庫/ 目前檔案
-| 檔案 | 編碼 | 說明 |
-|------|------|------|
-| `exam.docx` | — | exam01 原始題目檔 |
-| `exam_text.txt` | UTF-8 | exam01 抽取文字 |
-| `rows.tsv` | UTF-8 | exam01 TSV 中繼檔（本機） |
-| `exam01.csv` | UTF-8 (no BOM) | 範例題庫（資訊圖表，12 題，類別=綠色能源） |
-| `exam01_big5.csv` | Big5 | 範例題庫 Big5 版 |
-| `AI 基礎概論測驗.md` | UTF-8 | AI_chap1 原始題目檔（本機） |
-| `AI_chap1.csv` | UTF-8 (no BOM) | AI 基礎概論 第 1 章（20 題單選，類別=1-1～1-4 各節標題）（本機） |
-| `AI_chap1_big5.csv` | Big5 | AI_chap1 Big5 版（本機） |
-| `AI_CH03.md` | UTF-8 | AI_CH03 原始題目檔（本機） |
-| `AI_CH03_rows.tsv` / `AI_CH03_rows.cats` | UTF-8 | AI_CH03 TSV 中繼檔與各題類別（本機） |
-| `AI_CH03.csv` | UTF-8 (no BOM) | AI 應用 第 3 章（40 題單選，類別=3-1～3-4 各節標題）（本機） |
-| `AI_CH03_big5.csv` | Big5 | AI_CH03 Big5 版（本機） |
-| `低碳生活與氣候公約測驗.docx` | — | 低碳生活與氣候公約測驗 原始題目檔（本機） |
-| `低碳生活與氣候公約測驗.csv` | UTF-8 (no BOM) | 低碳生活與氣候公約（30 題單選，類別=1.1 / 1.2 各節標題）（本機） |
-| `低碳生活與氣候公約測驗_big5.csv` | Big5 | 低碳生活與氣候公約測驗 Big5 版（本機） |
-| `SDGs 永續發展測驗題庫.docx` | — | SDGs 永續發展 原始題目檔（本機） |
-| `SDGs 永續發展測驗題庫.csv` | UTF-8 (no BOM) | SDGs 永續發展（30 題單選，類別=2.1 / 2.2 各節標題）（本機） |
-| `SDGs 永續發展測驗題庫_big5.csv` | Big5 | SDGs 永續發展 Big5 版（本機） |
-| `2050淨零排放測驗.md` | UTF-8 | 2050 淨零排放 原始題目檔（本機） |
-| `2050淨零排放測驗.csv` | UTF-8 (no BOM) | 2050 淨零排放（20 題單選，無解說，類別=2050淨零排放）（本機） |
-| `2050淨零排放測驗 (1).md` | UTF-8 | 2050 淨零排放 5.1／5.2 原始題目檔（本機） |
-| `2050淨零排放測驗 (1).csv` | UTF-8 (no BOM) | 2050 淨零排放（40 題單選，無解說，類別=2050淨零排放-5.1／-5.2）（本機） |
-| `農業淨零政策.md` | UTF-8 | 農業淨零政策 原始題目檔（本機） |
-| `農業淨零政策.csv` | UTF-8 (no BOM) | 農業淨零政策（25 題單選，類別=農業淨零政策）（本機） |
-| `七_綠色能源考題.md` | UTF-8 | 綠色能源 原始題目檔（本機） |
-| `七_綠色能源考題.csv` | UTF-8 (no BOM) | 綠色能源（45 題單選，類別=綠色能源）（本機） |
-| `八_碳足跡與溫室氣體.md` | UTF-8 | 碳足跡與溫室氣體 原始題目檔（本機） |
-| `八_碳足跡與溫室氣體.csv` | UTF-8 (no BOM) | 碳足跡與溫室氣體（25 題單選，類別=碳足跡與溫室氣體）（本機） |
-
-新轉換的題庫請一律輸出到 `題庫/`，例如：`請把 題庫/exam02.docx 轉成題庫 題庫/exam02.csv`。

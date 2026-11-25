@@ -18,6 +18,8 @@ Free、Pro、Max、Ultra、Team、Enterprise 都可以用，但要開啟程式�
 
 ## 使用
 
+第一次請先下載範例 [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) 練習，再與[範例對照表](README.md#範例對照表)比對。
+
 1. 開新對話，附上考題檔（`.docx`、`.pdf`、`.txt`、`.md`；舊版 `.doc` 請先另存成 `.docx`）。
 2. 輸入：
    ```

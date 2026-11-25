@@ -3,7 +3,12 @@
 pack.py - Build the web-upload ZIPs from the canonical skill (skill/exam-to-qb).
 
   dist/exam-to-qb.zip         exam-to-qb/SKILL.md ...  Claude Web, ChatGPT Web
-  dist/exam-to-qb-gemini.zip  SKILL.md ... at ZIP root  Gemini Web
+  dist/exam-to-qb-gemini.zip  SKILL.md only             Gemini Web
+
+Gemini Web refuses to run scripts in custom skills (seen 2026-11-25), so its
+package is instructions only: Gemini outputs TSV and the user runs build.py
+locally. That SKILL.md comes from gemini/SKILL.template.md, with the shared
+format table and parsing rules filled in from the canonical SKILL.md.
 
 Usage:
   python web/pack.py           # rebuild both ZIPs
@@ -17,10 +22,16 @@ import zipfile
 HERE = os.path.dirname(os.path.abspath(__file__))
 SRC = os.path.join(HERE, "..", "skill", "exam-to-qb")
 DIST = os.path.join(HERE, "dist")
+TEMPLATE = os.path.join(HERE, "gemini", "SKILL.template.md")
 
 # build.ps1 (Windows only) and examples/ are not needed on the web.
 FILES = ["SKILL.md", "build.py", "extract.py", "header.csv"]
-PACKAGES = {"exam-to-qb.zip": "exam-to-qb/", "exam-to-qb-gemini.zip": ""}
+
+# Gemini template placeholder -> the canonical SKILL.md section that fills it.
+SHARED = {
+    "{{QB_FORMAT}}": re.compile(r"^## [^\n]*27[^\n]*\n(.*?)\n(?=## )", re.M | re.S),
+    "{{PARSE_RULES}}": re.compile(r"^### 2\. [^\n]*\n(.*?)\n(?=### )", re.M | re.S),
+}
 
 
 def payload(name):
@@ -30,6 +41,17 @@ def payload(name):
     if not name.endswith(".csv"):
         data = data.replace(b"\r\n", b"\n")
     return data
+
+
+def gemini_skill(canonical):
+    with open(TEMPLATE, "rb") as fh:
+        text = fh.read().replace(b"\r\n", b"\n").decode("utf-8")
+    for mark, pattern in SHARED.items():
+        found = pattern.search(canonical)
+        if not found or text.count(mark) != 1:
+            sys.exit("ERROR: cannot fill %s" % mark)
+        text = text.replace(mark, found.group(1).strip("\n"))
+    return text.encode("utf-8")
 
 
 def check_frontmatter(text):
@@ -43,11 +65,17 @@ def check_frontmatter(text):
 
 def main():
     wanted = {f: payload(f) for f in FILES}
-    check_frontmatter(wanted["SKILL.md"].decode("utf-8"))
+    canonical = wanted["SKILL.md"].decode("utf-8")
+    gemini = gemini_skill(canonical)
+    check_frontmatter(canonical)
+    check_frontmatter(gemini.decode("utf-8"))
+    packages = {
+        "exam-to-qb.zip": {"exam-to-qb/" + f: d for f, d in wanted.items()},
+        "exam-to-qb-gemini.zip": {"SKILL.md": gemini},
+    }
     stale = False
-    for pkg, prefix in PACKAGES.items():
+    for pkg, expect in packages.items():
         path = os.path.join(DIST, pkg)
-        expect = {prefix + f: d for f, d in wanted.items()}
         if "--check" in sys.argv:
             actual = {}
             if os.path.exists(path):

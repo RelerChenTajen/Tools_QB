@@ -7,6 +7,8 @@
 | Business、Enterprise、Edu、Healthcare | [方式 A：安裝技能](#方式-a安裝技能)（須工作區允許） |
 | Free、Go、Plus、Pro | [方式 B：附件](#方式-b附件)。官方的 Skills 適用名單未列這些方案 |
 
+第一次請先下載範例 [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) 當考題練習，再與[範例對照表](README.md#範例對照表)比對。
+
 ## 方式 A：安裝技能
 
 1. 下載 [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip)，不要解壓縮。
