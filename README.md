@@ -59,7 +59,7 @@ flowchart LR
 | 廠商 | 網頁版 | 本機工具（命令列） |
 |------|--------|--------------------|
 | Anthropic | [**Claude Web**](web/claude-web.md)：免費帳號可用 | **Claude Code** |
-| OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：免費帳號可用；不必安裝，每次對話附上 ZIP 與考題 | **Codex** |
+| OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：Plus 已實測可用；不必安裝，每次對話附上 ZIP 與考題 | **Codex** |
 | Google | [**Gemini Web**](web/gemini-web.md)：限滿 18 歲的個人帳號，免費可用；CSV 由 AI 直接寫出，未經 `build.py` 檢查 | **Gemini CLI** |
 
 網頁版比較：
@@ -69,10 +69,10 @@ flowchart LR
 | CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
 | 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
 | Big5 版 | 可直接產生 | 可直接產生 | 用記事本另存 ANSI |
-| 實測（2026-11-25） | 尚未實測 | ✅ 免費帳號附件方式，`sample.docx` 產出與 `sample.csv` 逐位元相同，可匯入題庫系統 | ✅ `sample.docx` 產出與 `sample.csv` 內容相同，可匯入題庫系統 |
+| 實測（2026-11-25） | 尚未實測 | ✅ Plus 帳號附件方式，`sample.docx` 產出與 `sample.csv` 逐位元相同，可匯入題庫系統 | ✅ `sample.docx` 產出與 `sample.csv` 內容相同，可匯入題庫系統 |
 
 - **有個人 Google 帳號**：Gemini Web 已實測可匯入，匯入前請逐題核對。
-- **重要考試或需要格式檢查**：用 ChatGPT Web（附件方式已實測可匯入）、Claude Web 或本機工具。
+- **重要考試或需要格式檢查**：用 ChatGPT Web（Plus 已實測可匯入）、Claude Web 或本機工具。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
 完整的比較與測試紀錄見[網頁版總覽](web/README.md)。

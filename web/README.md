@@ -5,10 +5,10 @@
 | AI 網頁版 | 誰可以用 | ZIP | 操作說明 |
 |-----------|---------------|--------|----------|
 | **Claude**（安裝技能） | 免費與所有付費方案 | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [claude-web.md](claude-web.md) |
-| **ChatGPT**（免安裝，每次附上） | 免費帳號即可 | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [chatgpt-web.md](chatgpt-web.md) |
+| **ChatGPT**（免安裝，每次附上） | Plus 已實測可用；免費與其他方案尚未實測 | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [chatgpt-web.md](chatgpt-web.md) |
 | **Gemini**（安裝技能） | 滿 18 歲的個人 Google 帳號（免費可用）；學校帳號尚未開放 | [`exam-to-qb-gemini.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip) | [gemini-web.md](gemini-web.md) |
 
-**不知道選哪個？** 有個人 Google 帳號可用 Gemini（已實測可匯入）；想要程式檢查格式，可用 ChatGPT 附件方式（免費帳號已實測可匯入）或 Claude（尚未實測）。
+**不知道選哪個？** 有個人 Google 帳號可用 Gemini（已實測可匯入）；想要程式檢查格式，可用 ChatGPT 附件方式（Plus 已實測可匯入）或 Claude（尚未實測）。
 
 > 要上傳的 ZIP **不要解壓縮**。也不要用 GitHub 的「Download ZIP」，那是整個專案，不是技能安裝檔。
 
@@ -72,9 +72,9 @@
 | Gemini 安裝含腳本的舊版 | 已實測：**不能執行**，Gemini 回覆不支援含程式碼的自訂技能 |
 | Gemini 純文字新版 | 以另一個 AI 模型代測（不准執行程式、一句 prompt）：9 題範例與 40 題單選，題目列全為 27 欄且內容與既有成果相同（40 題未測類別），表頭只少了行尾空白 |
 | Gemini 純文字新版（在 Gemini 實測） | 2026-11-25 以 `sample.docx` 產生的 CSV，11 列 27 欄內容與 `sample.csv` 完全相同（UTF-8 無 BOM、LF 換行），**可匯入題庫系統**。第一次測試技能未生效，產出 10 欄的通用格式；刪除技能重新建立後正常 |
-| ChatGPT 附件方式 | 2026-11-25 以免費帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` **逐位元相同**，**可匯入題庫系統** |
+| ChatGPT 附件方式 | 2026-11-25 以 Plus 帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` **逐位元相同**，**可匯入題庫系統** |
 | Claude 安裝技能 | **尚未實測** |
-| 題庫系統匯入網頁版產出的 CSV | Gemini、ChatGPT 已實測可匯入；Claude **尚未實測** |
+| 題庫系統匯入網頁版產出的 CSV | Gemini、ChatGPT（Plus）已實測可匯入；Claude **尚未實測** |
 
 ## 維護者：更新安裝檔
 
