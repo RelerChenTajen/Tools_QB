@@ -22,18 +22,20 @@ flowchart LR
 ```
 
 ### 你只要做三件事
-| 步驟 | 動作 | 例子 |
-|:--:|------|------|
-| 1️⃣ | 準備考題檔（網頁版：附加到對話） | `sample.docx` |
-| 2️⃣ | 跟 AI 說一句話 | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
-| 3️⃣ | 核對後，把產生的 CSV 匯入系統 | `題庫/sample.csv` |
+| 步驟 | 動作 | 網頁版 | 本機工具 |
+|:--:|------|--------|----------|
+| 1️⃣ | 準備考題檔 | 把 `sample.docx` 附加到對話 | `sample.docx` 放在專案資料夾 |
+| 2️⃣ | 跟 AI 說一句話 | `請用 exam-to-qb 技能把附件轉成題庫 CSV，類別：資訊安全` | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
+| 3️⃣ | 核對後匯入題庫系統 | 下載的 CSV | `題庫/sample.csv` |
+
+第一次使用要先安裝技能，見〈技能安裝與同步〉。
 
 ### 它會幫你處理的雜事
 - ✅ 認出題型（是非 / 單選 / 複選 / 填充 / 問答）
 - ✅ 拆好題目、選項、答案、解說
 - ✅ 排成題庫系統要的 27 欄格式
-- ✅ 擋下答案缺漏、答案編號超過選項數等格式錯誤
-- ✅ 編碼一律 UTF-8（另附 Big5 版給舊系統）
+- ✅ 擋下答案缺漏、答案編號超過選項數等格式錯誤（Gemini 網頁版除外）
+- ✅ 編碼一律 UTF-8（可另附 Big5 版給舊系統；Gemini 網頁版需自行另存）
 - ✅ 可依章節標題填「類別」
 
 ### 先用範例練習
@@ -47,12 +49,12 @@ flowchart LR
 | [`sample_big5.csv`](sample_big5.csv) | 轉換成果的 Big5 版 |
 | [`sample.tsv`](sample.tsv) | 中間檔，直接跑引擎時使用 |
 
-下面的操作都以 `sample.docx` 示範，成果輸出到 `題庫/sample.csv`，再與根目錄的 `sample.csv` 對照。
+下面的操作都以 `sample.docx` 示範。本機工具輸出到 `題庫/sample.csv`，網頁版則下載產生的檔案，再與根目錄的 `sample.csv` 對照。
 各題的正確答案見[範例對照表](web/README.md#範例對照表)。
 
 ### 三家 AI、兩種用法
 
-本專案的技能依循 [Agent Skills 開放標準](https://agentskills.io) 撰寫，同一份技能可用在三家主流 AI。轉換引擎為 Python（無第三方套件），Windows／macOS／Linux 皆可執行。
+本專案的技能依循 [Agent Skills 開放標準](https://agentskills.io) 撰寫，同一套規則可用在三家主流 AI。轉換引擎為 Python（無第三方套件），Windows／macOS／Linux 皆可執行；Gemini 網頁版不能執行技能裡的程式，改用由正本產生的純文字版。
 
 | 廠商 | 網頁版 | 本機工具（命令列） |
 |------|--------|--------------------|
@@ -60,12 +62,23 @@ flowchart LR
 | OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式 | **Codex** |
 | Google | [**Gemini Web**](web/gemini-web.md)：限滿 18 歲的個人帳號，免費可用；CSV 由 AI 直接寫出，未經 `build.py` 檢查 | **Gemini CLI** |
 
-- **一般教師**：建議從 Claude Web 開始，比較請看[網頁版總覽](web/README.md)。
+網頁版比較：
+
+| | Claude Web | ChatGPT Web | Gemini Web |
+|---|---|---|---|
+| CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
+| 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
+| Big5 版 | 可直接產生 | 可直接產生 | 用記事本另存 ANSI |
+| 實測（2026-11-25） | 尚未實測 | 尚未實測 | ✅ `sample.docx` 產出與 `sample.csv` 內容相同，可匯入題庫系統 |
+
+- **有個人 Google 帳號**：Gemini Web 已實測可用，匯入前請逐題核對。
+- **重要考試或需要格式檢查**：用 Claude Web 或本機工具。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
-> Gemini Web 經實測不能執行技能裡的程式（2026-11-25），已改為純文字技能，由 Gemini 直接寫出 CSV。各平台測試狀態見[網頁版總覽](web/README.md#查證與測試狀態2026-11-25)。
+完整的比較與測試紀錄見[網頁版總覽](web/README.md)。
 
 不綁單一廠商——換工具不必重做，轉換規則與輸出格式都相同。
+
 技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP 即可（見〈技能安裝與同步〉）。
 
 ---
@@ -78,11 +91,20 @@ flowchart LR
 ## 編碼約定
 - 主檔一律 **UTF-8 (no BOM)**。
 - Big5 副本命名規則：副檔名前加 `_big5`，例如 `sample.csv` → `sample_big5.csv`。
-- Big5 字集較小，轉換時會自動把 `≥`→`≧`、`≤`→`≦`；若仍有無法表示的字元會以 `?` 寫入並提出警告。
+- Big5 字集較小，`build.py` 轉換時會自動把 `≥`→`≧`、`≤`→`≦`；若仍有無法表示的字元會以 `?` 寫入並提出警告。
 
 ## 如何下 prompt
 
-以下範例適用本機工具。網頁版請先附加檔案，把檔名改說成「附件」，並加上「請使用 exam-to-qb 技能」；完整範本見[網頁版總覽](web/README.md#提示詞範本)。
+**網頁版**（先附加考題檔）：
+
+| AI | 輸入 |
+|----|------|
+| Claude、ChatGPT | `請使用 exam-to-qb 技能，把附件轉成題庫 CSV，類別填「資訊安全」，並產生 Big5 版。` |
+| Gemini | 輸入 `@` 選 `exam-to-qb`，再輸入 `請把附件轉成題庫 CSV，類別：資訊安全` |
+
+ChatGPT 附件方式、各平台的修改與補救說法，見各自的[操作說明](web/README.md)。
+
+**本機工具**：用以下範例。
 
 ### 1. 轉換新題目檔（最常用）
 ```
@@ -142,6 +164,9 @@ flowchart LR
 | Gemini | [`exam-to-qb-gemini.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip) | [gemini-web.md](web/gemini-web.md) |
 
 不要用 GitHub 的「Download ZIP」，那是整個專案，不是技能安裝檔。
+ChatGPT 的 Free、Go、Plus、Pro 用[附件方式](web/chatgpt-web.md#方式-b附件)。
+
+**安裝後先驗證**：用 `sample.docx` 轉一次，CSV 第一列應以 `version: 4` 開頭。Gemini 若不是，請刪除技能重新建立。
 
 ### 本機工具：安裝位置
 
@@ -194,7 +219,7 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 1. 改 `skill/exam-to-qb/` 底下的檔案（正本）
 2. commit + push
 3. 複製模式：重跑安裝腳本；連結模式：不必做任何事
-4. 網頁版：執行 `python web/pack.py` 重新打包並 commit + push，再通知使用者重新上傳（網頁版不會自動更新）
+4. 網頁版：執行 `python web/pack.py` 重新打包並 commit + push，再通知使用者重新上傳（網頁版不會自動更新；Gemini 請先刪除舊技能）
 
 ### 本機工具：技能目錄對照
 

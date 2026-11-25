@@ -21,7 +21,7 @@
 第一次請先下載範例 [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) 練習，再與[範例對照表](README.md#範例對照表)比對。
 
 1. 開新對話，附上考題（`.docx`、`.pdf` 或文字檔；舊版 `.doc` 請先另存成 `.docx`）。
-2. 輸入 `/`（部分帳號為 `@`）選 `exam-to-qb`，再輸入：
+2. 輸入 `@` 選 `exam-to-qb`，再輸入：
    ```
    請把附件轉成題庫 CSV，類別：資訊安全
    ```
@@ -61,7 +61,7 @@
 | Gemini 說不支援執行程式或腳本 | 安裝到舊版；刪除技能後，下載新的 ZIP 重新上傳 |
 | 找不到 Customize 或 Skills | 可能是學校帳號、未滿 18 歲，或尚未登入 |
 | 上傳失敗 | 確認用的是 `exam-to-qb-gemini.zip`，且沒有解壓後重壓 |
-| 技能沒有作用 | 確認已啟用並用 `/` 選取，且沒有同時開 Canvas 或 Deep Research |
+| 技能沒有作用 | 確認已啟用並用 `@` 選取，且沒有同時開 Canvas 或 Deep Research |
 | 產生的是 Google 試算表或 Excel | 輸入「請改成純文字 CSV 檔」 |
 | 題目很多，內容不完整 | 每次附 50 題以內，或請它「從第 N 題繼續」 |
 | 匯入時欄位錯位 | 輸入上表「檢查一次」那句，或改用 [Claude 網頁版](claude-web.md) |
