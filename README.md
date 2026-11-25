@@ -25,7 +25,7 @@ flowchart LR
 | 步驟 | 動作 | 網頁版 | 本機工具 |
 |:--:|------|--------|----------|
 | 1️⃣ | 準備考題檔 | 把 `sample.docx` 附加到對話 | `sample.docx` 放在專案資料夾 |
-| 2️⃣ | 跟 AI 說一句話 | `請用 exam-to-qb 技能把附件轉成題庫 CSV，類別：資訊安全`（ChatGPT 另見說明） | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
+| 2️⃣ | 跟 AI 說一句話 | `請用 exam-to-qb 技能把附件轉成題庫 CSV，類別：資訊安全`（各家說法見〈如何下 prompt〉） | `請把 sample.docx 轉成題庫 題庫/sample.csv` |
 | 3️⃣ | 核對後匯入題庫系統 | 下載的 CSV | `題庫/sample.csv` |
 
 第一次使用要先安裝技能（ChatGPT 網頁版免安裝），見〈技能安裝與同步〉。
@@ -58,21 +58,24 @@ flowchart LR
 
 | 廠商 | 網頁版 | 本機工具（命令列） |
 |------|--------|--------------------|
-| Anthropic | [**Claude Web**](web/claude-web.md)：付費帳號已實測可用；官方說明免費帳號也可用，尚未實測 | **Claude Code** |
-| OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：Plus 已實測可用；不必安裝，每次對話附上 ZIP 與考題 | **Codex** |
-| Google | [**Gemini Web**](web/gemini-web.md)：限滿 18 歲的個人帳號，免費可用；CSV 由 AI 直接寫出，未經 `build.py` 檢查 | **Gemini CLI** |
+| Anthropic | [**Claude Web**](web/claude-web.md) | **Claude Code** |
+| OpenAI | [**ChatGPT Web**](web/chatgpt-web.md) | **Codex** |
+| Google | [**Gemini Web**](web/gemini-web.md) | **Gemini CLI** |
 
-網頁版比較：
+三家網頁版都已實測：以 `sample.docx` 產生 CSV，並成功匯入題庫系統（2026-11-25）。
 
 | | Claude Web | ChatGPT Web | Gemini Web |
 |---|---|---|---|
+| 使用方式 | 安裝技能一次 | 免安裝，每次附上 ZIP 與考題 | 安裝技能一次 |
+| 已實測的帳號 | 付費帳號 | Plus | 個人 Google 帳號 |
+| 尚未實測的帳號 | 免費帳號（官方說明可用） | 免費與其他方案 | 學校帳號（尚未開放技能） |
 | CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
 | 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
-| Big5 版 | 可直接產生 | 可直接產生 | 用記事本另存 ANSI |
-| 實測（2026-11-25） | ✅ 付費帳號，`sample.docx` 產出只差第 8 題 2 個空白，可匯入題庫系統 | ✅ Plus 帳號附件方式，`sample.docx` 產出與 `sample.csv` 逐位元相同，可匯入題庫系統 | ✅ `sample.docx` 產出與 `sample.csv` 內容相同，可匯入題庫系統 |
+| Big5 版 | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | 用記事本另存 ANSI（未實測） |
+| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 逐位元相同 | 各格內容相同 |
 
-- **有個人 Google 帳號**：Gemini Web 已實測可匯入，匯入前請逐題核對。
-- **重要考試或需要格式檢查**：用 Claude Web（付費帳號）或 ChatGPT Web（Plus），都已實測可匯入；也可用本機工具。
+- **有個人 Google 帳號**：用 Gemini Web，匯入前請逐題核對。
+- **重要考試或需要格式檢查**：用 Claude Web（付費帳號）、ChatGPT Web（Plus）或本機工具。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
 完整的比較與測試紀錄見[網頁版總覽](web/README.md)。
@@ -270,7 +273,7 @@ python skill/exam-to-qb/build.py --tsv rows.tsv --out 題庫/my_exam.csv --allow
 
 ## 目錄結構
 ```
-QB/
+Tools_QB/
 ├── README.md                 本說明
 ├── sample.docx               範例考題（資訊安全，9 題）
 ├── sample.tsv                範例的 TSV 中間檔
