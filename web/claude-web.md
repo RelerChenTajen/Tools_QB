@@ -2,7 +2,7 @@
 
 ## 使用資格
 
-Free、Pro、Max、Ultra、Team、Enterprise 都可以用，但要開啟程式碼執行。
+官方說明 Free、Pro、Max、Ultra、Team、Enterprise 都可以用，但要開啟程式碼執行。付費帳號已實測可用（2026-11-25），免費帳號尚未實測。
 
 | 帳號 | 開啟方式 |
 |------|----------|
@@ -46,4 +46,4 @@ Free、Pro、Max、Ultra、Team、Enterprise 都可以用，但要開啟程式�
 - [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 - [How to create custom skills](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
 
-官方說明查證於 2026-11-24，選單名稱可能隨改版變動。2026-11-25 實測可產生 CSV 並匯入題庫系統。
+官方說明查證於 2026-11-24，選單名稱可能隨改版變動。2026-11-25 以付費帳號實測，可產生 CSV 並匯入題庫系統。
