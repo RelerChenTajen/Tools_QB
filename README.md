@@ -45,7 +45,7 @@ flowchart LR
 | [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) | 範例考題，轉換的來源 |
 | [`sample.csv`](sample.csv) | 轉換成果（UTF-8 無 BOM，類別「資訊安全」） |
 | [`sample_big5.csv`](sample_big5.csv) | 轉換成果的 Big5 版 |
-| [`sample.tsv`](sample.tsv) | 中間檔，也是 Gemini 網頁版應產生的內容 |
+| [`sample.tsv`](sample.tsv) | 中間檔，直接跑引擎時使用 |
 
 下面的操作都以 `sample.docx` 示範，成果輸出到 `題庫/sample.csv`，再與根目錄的 `sample.csv` 對照。
 各題的正確答案見[範例對照表](web/README.md#範例對照表)。
@@ -58,12 +58,12 @@ flowchart LR
 |------|--------|--------------------|
 | Anthropic | [**Claude Web**](web/claude-web.md)：免費帳號可用 | **Claude Code** |
 | OpenAI | [**ChatGPT Web**](web/chatgpt-web.md)：技能限 Business／Enterprise／Edu／Healthcare，其他方案用附件方式 | **Codex** |
-| Google | [**Gemini Web**](web/gemini-web.md)：只產生 TSV，再用電腦上的 Python 轉 CSV；技能限滿 18 歲的個人帳號，學校帳號用附件方式 | **Gemini CLI** |
+| Google | [**Gemini Web**](web/gemini-web.md)：限滿 18 歲的個人帳號，免費可用；CSV 由 AI 直接寫出，未經 `build.py` 檢查 | **Gemini CLI** |
 
 - **一般教師**：建議從 Claude Web 開始，比較請看[網頁版總覽](web/README.md)。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
-> Gemini Web 經實測不能執行技能裡的程式（2026-11-25），已改為純文字技能。各平台測試狀態見[網頁版總覽](web/README.md#查證與測試狀態2026-11-25)。
+> Gemini Web 經實測不能執行技能裡的程式（2026-11-25），已改為純文字技能，由 Gemini 直接寫出 CSV。各平台測試狀態見[網頁版總覽](web/README.md#查證與測試狀態2026-11-25)。
 
 不綁單一廠商——換工具不必重做，轉換規則與輸出格式都相同。
 技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP 即可（見〈技能安裝與同步〉）。

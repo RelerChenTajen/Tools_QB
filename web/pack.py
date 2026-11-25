@@ -6,14 +6,16 @@ pack.py - Build the web-upload ZIPs from the canonical skill (skill/exam-to-qb).
   dist/exam-to-qb-gemini.zip  SKILL.md only             Gemini Web
 
 Gemini Web refuses to run scripts in custom skills (seen 2026-11-25), so its
-package is instructions only: Gemini outputs TSV and the user runs build.py
-locally. That SKILL.md comes from gemini/SKILL.template.md, with the shared
-format table and parsing rules filled in from the canonical SKILL.md.
+package is instructions only and Gemini writes the 27-column CSV itself. That
+SKILL.md comes from gemini/SKILL.template.md, with the format table, parsing
+rules and CSV header filled in from the canonical skill.
 
 Usage:
   python web/pack.py           # rebuild both ZIPs
   python web/pack.py --check   # exit 1 if the ZIPs are out of date
 """
+import csv
+import io
 import os
 import re
 import sys
@@ -34,6 +36,10 @@ SHARED = {
 }
 
 
+TSV_NEWLINE_RULE = "多行用 `\\n` 標記（見下）。"
+CSV_NEWLINE_RULE = "多行直接在雙引號內換行。"
+
+
 def payload(name):
     with open(os.path.join(SRC, name), "rb") as fh:
         data = fh.read()
@@ -43,7 +49,7 @@ def payload(name):
     return data
 
 
-def gemini_skill(canonical):
+def gemini_skill(canonical, header):
     with open(TEMPLATE, "rb") as fh:
         text = fh.read().replace(b"\r\n", b"\n").decode("utf-8")
     for mark, pattern in SHARED.items():
@@ -51,7 +57,28 @@ def gemini_skill(canonical):
         if not found or text.count(mark) != 1:
             sys.exit("ERROR: cannot fill %s" % mark)
         text = text.replace(mark, found.group(1).strip("\n"))
+    # The canonical rules use a \n token for the TSV step; here Gemini writes
+    # real line breaks inside quoted CSV fields.
+    if text.count(TSV_NEWLINE_RULE) != 1:
+        sys.exit("ERROR: TSV newline rule not found; update TSV_NEWLINE_RULE")
+    text = text.replace(TSV_NEWLINE_RULE, CSV_NEWLINE_RULE)
+    header = header.decode("utf-8").replace("\r\n", "\n").rstrip("\n")
+    text = text.replace("{{HEADER}}", header)
+    if "{{" in text:
+        sys.exit("ERROR: unfilled placeholder in the Gemini template")
+    check_templates(text)
     return text.encode("utf-8")
+
+
+def check_templates(skill_md):
+    """Every sample row in the Gemini skill must really have 27 columns."""
+    blocks = re.findall(r"^```\n(,.*?)\n```$", skill_md, re.M | re.S)
+    for block in blocks:
+        rows = list(csv.reader(io.StringIO(block, newline="")))
+        if len(rows) != 1 or len(rows[0]) != 27:
+            sys.exit("ERROR: template row is not 27 columns: %a" % block[:60])
+    if len(blocks) < 5:
+        sys.exit("ERROR: expected a template row per question type")
 
 
 def check_frontmatter(text):
@@ -66,7 +93,7 @@ def check_frontmatter(text):
 def main():
     wanted = {f: payload(f) for f in FILES}
     canonical = wanted["SKILL.md"].decode("utf-8")
-    gemini = gemini_skill(canonical)
+    gemini = gemini_skill(canonical, wanted["header.csv"])
     check_frontmatter(canonical)
     check_frontmatter(gemini.decode("utf-8"))
     packages = {
