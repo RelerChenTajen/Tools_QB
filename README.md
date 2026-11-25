@@ -58,7 +58,9 @@ flowchart LR
 
 > 🔵 **一般教師**｜只要瀏覽器和 AI 帳號，不用寫程式
 >
-> 👉 第一次使用：看[圖解說明 quickstart.html](web/quickstart.html)（大圖、少字，可複製提示詞；在 GitHub 檔案頁按下載鈕，再雙擊用瀏覽器開啟）
+> 👉 第一次使用：看[圖解說明](https://relerchentajen.github.io/Tools_QB/web/quickstart.html)（大圖、少字，點開就能看，可複製提示詞）
+>
+> 也可以直接開啟：[Claude](https://relerchentajen.github.io/Tools_QB/web/quickstart.html#claude)、[ChatGPT 外掛](https://relerchentajen.github.io/Tools_QB/web/quickstart.html#chatgpt-plugin)、[ChatGPT 附件](https://relerchentajen.github.io/Tools_QB/web/quickstart.html#chatgpt-file)、[Gemini](https://relerchentajen.github.io/Tools_QB/web/quickstart.html#gemini)
 
 ### 第 1 步：選一個 AI
 
@@ -323,7 +325,7 @@ Tools_QB/
 ├── skill/                    技能正本（exam-to-qb）與安裝腳本
 ├── web/                      網頁版（Claude／ChatGPT／Gemini）
 │   ├── README.md             總覽、比較與共用檢查項目
-│   ├── quickstart.html       圖解說明（給第一次使用的教師）
+│   ├── quickstart.html       圖解說明（GitHub Pages 線上頁的原始檔）
 │   ├── claude-web.md         Claude 安裝與操作
 │   ├── chatgpt-web.md        ChatGPT 私人外掛與附件方式
 │   ├── gemini-web.md         Gemini 安裝與操作
