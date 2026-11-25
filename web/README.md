@@ -1,6 +1,6 @@
 # exam-to-qb 網頁版安裝總覽
 
-在瀏覽器裡就能用 exam-to-qb 把考題檔轉成題庫 CSV。請依您使用的 AI 選一份說明：
+在瀏覽器裡就能用 exam-to-qb 把考題檔轉成題庫 CSV。請依您使用的 AI 選一份說明。第一次使用可先看[圖解說明 quickstart.html](quickstart.html)（大圖、少字，可複製提示詞；在 GitHub 檔案頁按下載鈕，再雙擊用瀏覽器開啟）。
 
 | AI 網頁版 | 誰可以用 | ZIP | 操作說明 |
 |-----------|---------------|--------|----------|
@@ -95,6 +95,8 @@
 python web/pack.py           # 重新打包
 python web/pack.py --check   # 檢查 ZIP 是否落後正本
 ```
+
+`quickstart.html` 的步驟與提示詞取自三份說明，說明改了要一併修改。
 
 改了正本後要重新打包、commit、push，並通知使用者重新上傳，網頁版不會自動更新。
 

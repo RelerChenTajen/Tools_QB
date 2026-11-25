@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="用大圖和少少的字，教老師在 Claude、ChatGPT、Gemini 網頁版把考題轉成題庫 CSV。">
+<title>考題變題庫</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@700&family=Noto+Sans+TC:wght@400;500;700&display=swap">
+<style>
+/* Layout: one column of big pictures. Light theme is an exam paper, dark theme is a blackboard; the red pen marks what to do. */
+:root{
+  --bg:#eef3f6; --surface:#ffffff; --ink:#16324a; --muted:#516a7d; --line:#b9c9d4;
+  --pen:#c9272f; --pen-ink:#ffffff; --ok:#17784c; --hl:#ffeb8f;
+  --display:"LXGW WenKai TC","DFKai-SB","BiauKai",serif;
+  --body:"Noto Sans TC","Microsoft JhengHei","PingFang TC",sans-serif;
+  --mono:ui-monospace,Consolas,"Cascadia Mono",monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#13241f; --surface:#1b312a; --ink:#eff5ef; --muted:#adc2b7; --line:#41594f;
+  --pen:#ff8f86; --pen-ink:#2a0c0a; --ok:#83d9ab; --hl:#55511d; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#13241f; --surface:#1b312a; --ink:#eff5ef; --muted:#adc2b7; --line:#41594f;
+  --pen:#ff8f86; --pen-ink:#2a0c0a; --ok:#83d9ab; --hl:#55511d; color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:400 18px/1.65 var(--body);
+  padding-block:2.5rem 4rem;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.page{max-width:1040px;margin:0 auto;display:grid;gap:4rem}
+.page>*{min-width:0}
+h1,h2,h3{font-family:var(--display);font-weight:700;line-height:1.25;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.6rem,8vw,4.6rem)}
+h2{font-size:clamp(1.8rem,4.6vw,2.6rem)}
+h3{font-size:1.35rem}
+p{margin:0}
+a{color:inherit;text-decoration-color:var(--pen);text-underline-offset:.2em}
+svg{display:block;max-width:100%;height:auto}
+:focus-visible{outline:3px solid var(--pen);outline-offset:3px}
+.sec{display:grid;gap:1.5rem}
+.lead{font-size:1.2rem;max-width:34em}
+.red{color:var(--pen)}
+mark{background:var(--hl);color:inherit;padding:0 .2em}
+
+.flow{display:flex;align-items:center;gap:1rem;margin:0}
+.flow .pic{flex:1 1 0;min-width:0;display:grid;justify-items:center;gap:.5rem;text-align:center;font-weight:700}
+.flow .pic svg{width:min(100%,210px)}
+.flow .arr{flex:0 0 64px;color:var(--pen)}
+figcaption{color:var(--muted)}
+
+.three{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;list-style:none;padding:0;margin:0}
+.three li{display:grid;gap:.75rem;justify-items:center;text-align:center}
+.three svg{width:130px}
+
+.tabs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem}
+.tabs button{font:700 1.05rem/1.3 var(--body);color:var(--ink);background:var(--surface);border:2px solid var(--line);
+  padding:1rem .75rem;cursor:pointer;display:grid;gap:.2rem;text-align:left;align-content:start}
+.tabs button span{font:400 .88rem/1.4 var(--body);color:var(--muted)}
+.tabs button[aria-selected="true"]{border-color:var(--pen);box-shadow:inset 0 0 0 2px var(--pen)}
+.panel{display:grid;gap:2.25rem}
+.phase{display:grid;gap:1rem}
+.phase>h3{display:flex;gap:.6rem;align-items:baseline;flex-wrap:wrap}
+.phase>h3 small{font:400 1rem/1.4 var(--body);color:var(--muted)}
+.steps{list-style:none;padding:0;margin:0;display:grid;gap:1rem;counter-reset:s}
+.steps li{counter-increment:s;display:grid;grid-template-columns:112px minmax(0,1fr);gap:1.25rem;align-items:center;
+  background:var(--surface);border:2px solid var(--line);padding:1.1rem 1.25rem}
+.steps li>svg{width:104px}
+.steps .tx{display:grid;gap:.6rem;min-width:0}
+.steps .tx>b{font-size:1.2rem;line-height:1.4}
+.steps .tx>b::before{content:counter(s) ". ";color:var(--pen)}
+.path{display:flex;flex-wrap:wrap;gap:.4rem .5rem;align-items:center}
+.key{border:2px solid var(--ink);padding:.1rem .6rem;font-weight:500;font-size:1rem}
+.key small{color:var(--muted);font-size:.85em}
+.path i{font-style:normal;color:var(--pen);font-weight:700}
+.say{display:grid;gap:.6rem}
+.say pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;background:var(--hl);padding:.8rem 1rem;font:500 1rem/1.6 var(--body)}
+.btn{justify-self:start;font:700 1rem/1 var(--body);background:var(--pen);color:var(--pen-ink);border:0;padding:.8rem 1.2rem;cursor:pointer;text-decoration:none;display:inline-block}
+.note{color:var(--muted);font-size:1rem}
+
+.pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1.5rem}
+.pair>div{display:grid;gap:.75rem;justify-items:center;text-align:center}
+.pair svg{width:min(100%,200px)}
+.good{color:var(--ok);font-weight:700;font-size:1.25rem}
+.bad{color:var(--pen);font-weight:700;font-size:1.25rem}
+
+.csv{background:var(--surface);border:2px solid var(--line);overflow-x:auto;font:400 1rem/2 var(--mono);padding:1rem 1.25rem;white-space:pre;margin:0}
+.csv b{background:var(--hl);font-size:1.35rem;padding:.1em .3em}
+.fix{display:grid;gap:1rem;margin:0}
+.fix>div{display:grid;grid-template-columns:minmax(0,1fr) 40px minmax(0,1.3fr);gap:1rem;align-items:center;border-bottom:2px dashed var(--line);padding-bottom:1rem}
+.fix dt{font-weight:700}.fix dd{margin:0}
+.fix svg{width:36px;color:var(--pen)}
+.stop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.5rem;text-align:center;font-weight:700}
+.stop div{display:grid;gap:.5rem;justify-items:center}
+.stop svg{width:120px}
+footer{color:var(--muted);font-size:1rem;display:grid;gap:.4rem}
+
+@media (max-width:720px){
+  .flow{flex-direction:column}
+  .flow .pic{flex:none;width:100%}
+  .flow .pic svg{width:190px}
+  .flow .arr{flex:none;width:56px;transform:rotate(90deg)}
+  .three,.stop{grid-template-columns:minmax(0,1fr)}
+  .tabs{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .steps li{grid-template-columns:minmax(0,1fr);justify-items:start}
+  .fix>div{grid-template-columns:minmax(0,1fr)}
+  .fix svg{transform:rotate(90deg)}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="paper" viewBox="0 0 96 96"><path d="M20 8h42l16 16v64H20z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M62 8v16h16" fill="none" stroke="currentColor" stroke-width="4"/><path d="M32 36h34M32 50h22M32 64h34M32 78h16" fill="none" stroke="currentColor" stroke-width="4"/><path d="M58 50l5 6 11-14" fill="none" stroke="var(--pen)" stroke-width="5"/></symbol>
+    <symbol id="zip" viewBox="0 0 96 96"><path d="M12 34l36-16 36 16v42L48 88 12 76z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M12 34l36 12 36-12M48 46v42" fill="none" stroke="currentColor" stroke-width="4"/><path d="M30 26l36 13v12" fill="none" stroke="var(--pen)" stroke-width="5"/></symbol>
+    <symbol id="zipopen" viewBox="0 0 96 96"><path d="M16 46l32 10 32-10v32L48 88 16 78z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M48 56v32M16 46L4 34l30-8 14 12M80 46l12-12-30-8-14 12" fill="none" stroke="currentColor" stroke-width="4"/><path d="M34 6h16v20H34zM56 2h14v18H56z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="down" viewBox="0 0 96 96"><path d="M48 10v46M28 38l20 20 20-20" fill="none" stroke="var(--pen)" stroke-width="7"/><path d="M14 62v22h68V62" fill="none" stroke="currentColor" stroke-width="5"/></symbol>
+    <symbol id="up" viewBox="0 0 96 96"><path d="M14 58v26h68V58" fill="none" stroke="currentColor" stroke-width="5"/><path d="M48 70V16M28 34l20-20 20 20" fill="none" stroke="var(--pen)" stroke-width="7"/></symbol>
+    <symbol id="clip" viewBox="0 0 96 96"><path d="M10 18h44l12 12v46H10z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M20 36h30M20 50h34M20 62h20" stroke="currentColor" stroke-width="4" fill="none"/><circle cx="72" cy="68" r="20" fill="var(--pen)"/><path d="M72 57v22M61 68h22" stroke="var(--pen-ink)" stroke-width="6" fill="none"/></symbol>
+    <symbol id="talk" viewBox="0 0 96 96"><path d="M8 14h80v52H46L28 86V66H8z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M22 32h52M22 47h34" stroke="var(--pen)" stroke-width="6" fill="none"/></symbol>
+    <symbol id="at" viewBox="0 0 96 96"><rect x="8" y="20" width="80" height="56" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><text x="38" y="63" text-anchor="middle" font-size="46" font-weight="700" fill="var(--pen)" font-family="sans-serif">@</text><path d="M74 34v28" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="switch" viewBox="0 0 96 96"><rect x="8" y="28" width="80" height="40" rx="20" fill="var(--ok)"/><circle cx="68" cy="48" r="15" fill="var(--surface)"/></symbol>
+    <symbol id="eye" viewBox="0 0 96 96"><path d="M6 48s16-26 42-26 42 26 42 26-16 26-42 26S6 48 6 48z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><circle cx="48" cy="48" r="13" fill="var(--pen)"/></symbol>
+    <symbol id="table" viewBox="0 0 96 96"><rect x="8" y="14" width="80" height="68" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M8 32h80M8 49h80M8 66h80M32 14v68M60 14v68" stroke="currentColor" stroke-width="3" fill="none"/><rect x="10" y="16" width="76" height="15" fill="var(--pen)"/></symbol>
+    <symbol id="robot" viewBox="0 0 96 96"><path d="M48 6v14" stroke="currentColor" stroke-width="4"/><circle cx="48" cy="7" r="5" fill="var(--pen)"/><rect x="16" y="20" width="64" height="46" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><circle cx="36" cy="40" r="6" fill="currentColor"/><circle cx="60" cy="40" r="6" fill="currentColor"/><path d="M36 54h24" stroke="var(--pen)" stroke-width="5"/><path d="M28 66v22h40V66M16 74l-8 10M80 74l8 10" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="school" viewBox="0 0 96 96"><path d="M8 84V42h80v42z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M28 42L48 22l20 20M48 22V6h16v10H48" fill="none" stroke="currentColor" stroke-width="4"/><path d="M48 6h16v10H48z" fill="var(--pen)"/><path d="M40 84V62h16v22M18 54h12v12H18zM66 54h12v12H66z" fill="none" stroke="currentColor" stroke-width="4"/></symbol>
+    <symbol id="person" viewBox="0 0 96 96"><circle cx="48" cy="30" r="18" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M14 88c2-22 16-34 34-34s32 12 34 34z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M12 12l72 72" stroke="var(--pen)" stroke-width="8"/></symbol>
+    <symbol id="lock" viewBox="0 0 96 96"><rect x="18" y="42" width="60" height="44" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M30 42V28a18 18 0 0136 0v14" fill="none" stroke="currentColor" stroke-width="5"/><circle cx="48" cy="62" r="6" fill="currentColor"/><path d="M10 12l76 76" stroke="var(--pen)" stroke-width="8"/></symbol>
+    <symbol id="secret" viewBox="0 0 96 96"><path d="M20 8h42l16 16v64H20z" fill="var(--surface)" stroke="currentColor" stroke-width="4"/><path d="M32 40h34M32 54h34M32 68h22" stroke="currentColor" stroke-width="4"/><path d="M10 12l76 76" stroke="var(--pen)" stroke-width="8"/></symbol>
+    <symbol id="go" viewBox="0 0 64 40"><path d="M4 20h50M38 6l16 14-16 14" fill="none" stroke="currentColor" stroke-width="6"/></symbol>
+  </defs>
+</svg>
+
+<div class="page">
+  <header class="sec">
+    <h1>考題<span class="red">變</span>題庫</h1>
+    <p class="lead">把考題交給 AI，它排成題庫系統看得懂的表格。你檢查，然後匯入。</p>
+    <figure class="flow" aria-label="考題交給 AI，排成表格，老師檢查後匯入題庫系統">
+      <div class="pic"><svg viewBox="0 0 96 96"><use href="#paper"/></svg>考題</div>
+      <svg class="arr" viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg>
+      <div class="pic"><svg viewBox="0 0 96 96"><use href="#robot"/></svg>AI 幫手</div>
+      <svg class="arr" viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg>
+      <div class="pic"><svg viewBox="0 0 96 96"><use href="#table"/></svg>題庫 CSV</div>
+      <svg class="arr" viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg>
+      <div class="pic"><svg viewBox="0 0 96 96"><use href="#school"/></svg>題庫系統</div>
+    </figure>
+  </header>
+
+  <section class="sec">
+    <h2>每次只做三件事</h2>
+    <ol class="three">
+      <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><h3>1. 附上考題</h3></li>
+      <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><h3>2. 說一句話</h3></li>
+      <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#eye"/></svg><h3>3. 檢查，再匯入</h3></li>
+    </ol>
+  </section>
+
+  <section class="sec">
+    <h2>那個 ZIP 是什麼？</h2>
+    <p class="lead">是 AI 的<mark>工作手冊</mark>，教它怎麼排題庫。整盒交給 AI，不用拆開。</p>
+    <div class="pair">
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zip"/></svg><span class="good">○ 整盒上傳</span></div>
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zipopen"/></svg><span class="bad">✕ 先解壓縮</span></div>
+    </div>
+  </section>
+
+  <section class="sec" id="pick">
+    <h2>你有哪一個？點下去</h2>
+    <div class="tabs" role="tablist" aria-label="選擇 AI">
+      <button role="tab" type="button" id="t-claude" data-k="claude" aria-controls="p-claude" aria-selected="true">Claude<span>付費帳號已實測</span></button>
+      <button role="tab" type="button" id="t-plugin" data-k="chatgpt-plugin" aria-controls="p-plugin" aria-selected="false">ChatGPT 外掛<span>Plus，常常用</span></button>
+      <button role="tab" type="button" id="t-file" data-k="chatgpt-file" aria-controls="p-file" aria-selected="false">ChatGPT 附件<span>Plus，偶爾用</span></button>
+      <button role="tab" type="button" id="t-gemini" data-k="gemini" aria-controls="p-gemini" aria-selected="false">Gemini<span>個人帳號，滿 18 歲，免費</span></button>
+    </div>
+
+    <div class="panel" id="p-claude" role="tabpanel" aria-labelledby="t-claude">
+      <div class="phase">
+        <h3>先準備 <small>只做一次</small></h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zip"/></svg><div class="tx"><b>下載工作手冊</b><a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip">exam-to-qb.zip</a></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#switch"/></svg><div class="tx"><b>打開開關</b><div class="path"><span class="key">Settings <small>設定</small></span><i>→</i><span class="key">Capabilities <small>功能</small></span><i>→</i><span class="key">Code execution and file creation <small>程式碼執行與建立檔案</small></span></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#up"/></svg><div class="tx"><b>上傳 ZIP</b><div class="path"><span class="key">Customize <small>自訂</small></span><i>→</i><span class="key">Skills <small>技能</small></span><i>→</i><span class="key">＋</span><i>→</i><span class="key">Create skill <small>建立技能</small></span><i>→</i><span class="key">Upload a skill <small>上傳技能</small></span></div></div></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>每次使用</h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><div class="tx"><b>開新對話，附上考題</b></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><div class="tx"><b>貼上這句</b><div class="say"><pre>請使用 exam-to-qb 技能，把附件轉成題庫 CSV，類別填「資訊安全」，並產生 Big5 版。</pre><button class="btn copy" type="button">複製</button></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#down"/></svg><div class="tx"><b>下載 CSV</b></div></li>
+        </ol>
+      </div>
+      <p class="note">Claude 官方沒有列出中文介面，所以按鈕照英文找。免費帳號官方說可用，我們還沒試過。</p>
+    </div>
+
+    <div class="panel" id="p-plugin" role="tabpanel" aria-labelledby="t-plugin" hidden>
+      <div class="phase">
+        <h3>先準備 <small>只做一次</small></h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zip"/></svg><div class="tx"><b>下載兩個檔案</b><div class="path"><a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip">exam-to-qb.zip</a><a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx">sample.docx</a></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><div class="tx"><b>到 ChatGPT Work，附上兩個檔案</b><p class="note">用個人帳號和個人工作區。</p></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#at"/></svg><div class="tx"><b>打 @，選 Plugin Creator</b></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><div class="tx"><b>貼上這段，送出</b><div class="say"><pre>請將我上傳的 Skill ZIP 封裝成私人外掛，顯示名稱為「考題轉題庫 CSV」。
+SKILL.md、Python 腳本和 header.csv 請原封不動保留，不要改寫、精簡或重新產生。
+建立前請用 sample.docx 實際執行轉換，確認能輸出 UTF-8 無 BOM 與 Big5（CP950）兩版 CSV。
+建立後請提供外掛連結。</pre><button class="btn copy" type="button">複製</button></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#switch"/></svg><div class="tx"><b>打開外掛連結，按安裝</b><div class="path"><span class="key">安裝外掛程式 <small>Install plugin</small></span></div><p class="note">這個連結是你個人的，不要公開。</p></div></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>每次使用</h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><div class="tx"><b>Work 開新對話，附上考題</b></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#at"/></svg><div class="tx"><b>打 @，選「考題轉題庫 CSV」</b></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><div class="tx"><b>貼上這句</b><div class="say"><pre>請將上傳的考題轉成 27 欄題庫 CSV，類別填「資訊安全」。請實際執行 build.py，並提供 UTF-8 無 BOM 與 Big5（CP950）兩個版本的下載檔。</pre><button class="btn copy" type="button">複製</button></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#down"/></svg><div class="tx"><b>下載 CSV</b></div></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="panel" id="p-file" role="tabpanel" aria-labelledby="t-file" hidden>
+      <div class="phase">
+        <h3>先準備 <small>只做一次</small></h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zip"/></svg><div class="tx"><b>下載工作手冊</b><a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip">exam-to-qb.zip</a></div></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>每次使用</h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><div class="tx"><b>附上 ZIP 和考題，共兩個</b><div class="path"><span class="key">＋</span><i>→</i><span class="key">新增相片與檔案 <small>Add photos &amp; files</small></span></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><div class="tx"><b>貼上這段</b><div class="say"><pre>請解壓縮 exam-to-qb.zip，閱讀 SKILL.md，依其流程把考題檔轉成題庫 CSV。
+類別填「資訊安全」，並產生 Big5 版。
+請實際執行 build.py 產生檔案；若無法執行 Python，請直接告訴我，不要用聊天文字代替。</pre><button class="btn copy" type="button">複製</button></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#down"/></svg><div class="tx"><b>下載 CSV</b></div></li>
+        </ol>
+      </div>
+      <p class="note">免費帳號還沒試過，而且一天只能上傳 3 個檔案。</p>
+    </div>
+
+    <div class="panel" id="p-gemini" role="tabpanel" aria-labelledby="t-gemini" hidden>
+      <div class="phase">
+        <h3>先準備 <small>只做一次</small></h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#zip"/></svg><div class="tx"><b>下載 Gemini 專用手冊</b><a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip">exam-to-qb-gemini.zip</a></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#up"/></svg><div class="tx"><b>上傳 ZIP</b><div class="path"><span class="key">自訂 <small>Customize</small></span><i>→</i><span class="key">技能 <small>Skills</small></span><i>→</i><span class="key">建立 <small>Create</small></span><i>→</i><span class="key">上傳 <small>Upload</small></span><i>→</i><span class="key">開啟 <small>Open</small></span></div><p class="note">裝過舊版，先刪掉舊的。</p></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#switch"/></svg><div class="tx"><b>看一下內容，按建立</b><div class="path"><span class="key">建立 <small>Create</small></span></div></div></li>
+        </ol>
+      </div>
+      <div class="phase">
+        <h3>每次使用</h3>
+        <ol class="steps">
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#clip"/></svg><div class="tx"><b>開新對話，附上考題</b><div class="path"><span class="key">新的對話</span><i>→</i><span class="key">新增檔案</span><i>→</i><span class="key">上傳檔案</span></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#at"/></svg><div class="tx"><b>打 @，選 exam-to-qb</b></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#talk"/></svg><div class="tx"><b>貼上這句</b><div class="say"><pre>請把附件轉成題庫 CSV，類別：資訊安全</pre><button class="btn copy" type="button">複製</button></div></div></li>
+          <li><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#down"/></svg><div class="tx"><b>下載 CSV</b></div></li>
+        </ol>
+      </div>
+      <p class="note">Gemini 沒有程式幫忙檢查格式，請多看一遍。學校帳號還不能用技能。</p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>第一次，先拿範例練習</h2>
+    <p class="lead">下載練習考題，當成你的考題走一遍。共 9 題，五種題型都有。</p>
+    <a class="btn" href="https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx">下載 sample.docx</a>
+    <p class="note"><a href="https://github.com/RelerChenTajen/Tools_QB/blob/main/web/README.md#範例對照表">看標準答案</a></p>
+  </section>
+
+  <section class="sec">
+    <h2>怎麼知道做對了？</h2>
+    <p class="lead">用記事本打開 CSV，第一列要看到 <mark>version: 4</mark>。</p>
+    <pre class="csv"><b>version: 4</b>,,,,,,,,,
+題組,類別,題型,題目,答案,…
+,資訊安全,2,收到自稱銀行的電子郵件…,2,…</pre>
+    <p class="note">示意圖，只畫出前幾欄。不要用 Excel 打開後直接存檔。</p>
+    <div class="pair">
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#table"/></svg><span class="good">○ 格式對了</span></div>
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#paper"/></svg><span class="bad">答案還是要自己核對</span></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <h2>不對勁？這樣修</h2>
+    <dl class="fix">
+      <div><dt>Claude 沒照手冊做</dt><svg viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg><dd>說清楚「請使用 exam-to-qb 技能」</dd></div>
+      <div><dt>ChatGPT 外掛結果不同</dt><svg viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg><dd>用 Plugin Creator 重新放入 ZIP，要求原封不動</dd></div>
+      <div><dt>Gemini 第一列不是 version: 4</dt><svg viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg><dd>刪掉技能，重新建立</dd></div>
+      <div><dt>出現 INVALID question 5</dt><svg viewBox="0 0 64 40" aria-hidden="true"><use href="#go"/></svg><dd>第 5 題有問題，對照原稿改好再轉</dd></div>
+    </dl>
+  </section>
+
+  <section class="sec">
+    <h2>這些不要上傳</h2>
+    <div class="stop">
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#secret"/></svg>沒有授權的正式考題</div>
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#person"/></svg>學生個資</div>
+      <div><svg viewBox="0 0 96 96" aria-hidden="true"><use href="#lock"/></svg>密碼</div>
+    </div>
+  </section>
+
+  <footer>
+    <p>想看完整步驟：<a href="https://github.com/RelerChenTajen/Tools_QB/blob/main/web/claude-web.md">Claude</a>、<a href="https://github.com/RelerChenTajen/Tools_QB/blob/main/web/chatgpt-web.md">ChatGPT</a>、<a href="https://github.com/RelerChenTajen/Tools_QB/blob/main/web/gemini-web.md">Gemini</a></p>
+    <p>2026 年 11 月 25 日整理。按鈕名稱可能隨改版變動。</p>
+  </footer>
+</div>
+
+<script>
+(function(){
+  var tabs=[].slice.call(document.querySelectorAll('[role="tab"]'));
+  function show(tab){
+    tabs.forEach(function(t){
+      var on=t===tab;
+      t.setAttribute('aria-selected',on?'true':'false');
+      t.tabIndex=on?0:-1;
+      document.getElementById(t.getAttribute('aria-controls')).hidden=!on;
+    });
+  }
+  function fromHash(){
+    var k=location.hash.slice(1);
+    var t=tabs.filter(function(x){return x.dataset.k===k})[0];
+    show(t||tabs[0]);
+  }
+  tabs.forEach(function(t,i){
+    t.addEventListener('click',function(){show(t);try{history.replaceState(null,'','#'+t.dataset.k)}catch(e){}});
+    t.addEventListener('keydown',function(e){
+      var d=e.key==='ArrowRight'?1:e.key==='ArrowLeft'?-1:0;
+      if(!d)return;
+      var n=tabs[(i+d+tabs.length)%tabs.length];n.focus();n.click();
+    });
+  });
+  window.addEventListener('hashchange',fromHash);
+  fromHash();
+  [].forEach.call(document.querySelectorAll('.copy'),function(b){
+    b.addEventListener('click',function(){
+      var pre=b.parentNode.querySelector('pre');
+      function pick(){var r=document.createRange();r.selectNodeContents(pre);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent='已選取，請按 Ctrl+C'}
+      try{navigator.clipboard.writeText(pre.textContent).then(function(){b.textContent='已複製'},pick)}catch(e){pick()}
+      setTimeout(function(){b.textContent='複製'},2500);
+    });
+  });
+})();
+</script>
+</body>
+</html>
