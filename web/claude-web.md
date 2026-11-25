@@ -46,4 +46,4 @@ Free、Pro、Max、Ultra、Team、Enterprise 都可以用，但要開啟程式�
 - [Use skills in Claude](https://support.claude.com/en/articles/12512180-use-skills-in-claude)
 - [How to create custom skills](https://support.claude.com/en/articles/12512198-how-to-create-custom-skills)
 
-查證日期 2026-11-24，選單名稱可能隨改版變動。
+官方說明查證於 2026-11-24，選單名稱可能隨改版變動。2026-11-25 實測可產生 CSV 並匯入題庫系統。
