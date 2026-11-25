@@ -72,7 +72,7 @@ flowchart LR
 | CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
 | 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
 | Big5 版 | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | 用記事本另存 ANSI（未實測） |
-| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 附件方式逐位元相同；私人外掛可匯入，未比對 | 各格內容相同 |
+| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 兩種方式都逐位元相同 | 各格內容相同 |
 
 - **有個人 Google 帳號**：用 Gemini Web，匯入前請逐題核對。
 - **重要考試或需要格式檢查**：用 Claude Web（付費帳號）、ChatGPT Web（Plus）或本機工具。

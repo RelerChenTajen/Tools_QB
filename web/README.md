@@ -83,7 +83,7 @@
 | Gemini 純文字新版 | 以另一個 AI 模型代測（不准執行程式、一句 prompt）：9 題範例與 40 題單選，題目列全為 27 欄且內容與既有成果相同（40 題未測類別），表頭只少了行尾空白 |
 | Gemini 純文字新版（在 Gemini 實測） | 2026-11-25 以 `sample.docx` 產生的 CSV，11 列 27 欄內容與 `sample.csv` 完全相同（UTF-8 無 BOM、LF 換行），**可匯入題庫系統**。第一次測試技能未生效，產出 10 欄的通用格式；刪除技能重新建立後正常 |
 | ChatGPT 附件方式 | 2026-11-25 以 Plus 帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` **逐位元相同**，**可匯入題庫系統** |
-| ChatGPT 私人外掛 | 2026-11-25 以 Plus 帳號實測，產出的 CSV **可匯入題庫系統**（未與 `sample.csv` 逐格比對；Big5 版由 ChatGPT 回報可產出，未核對檔案） |
+| ChatGPT 私人外掛 | 2026-11-25 以 Plus 帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` **逐位元相同**，**可匯入題庫系統**（Big5 版由 ChatGPT 回報可產出，未核對檔案） |
 | Claude 安裝技能 | 2026-11-25 以付費帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` 只差第 8 題填空前的 2 個空白，其餘各格相同，**可匯入題庫系統** |
 | 題庫系統匯入網頁版產出的 CSV | Claude（付費帳號）、ChatGPT（Plus）、Gemini 都已實測可匯入 |
 
