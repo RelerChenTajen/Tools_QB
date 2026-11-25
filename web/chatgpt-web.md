@@ -4,9 +4,11 @@
 
 ## 使用資格
 
-各方案的帳號都可以上傳檔案。開啟 ZIP 與執行 Python 需要 Data Analysis 功能，官方說明未列明各方案是否都有；若 ChatGPT 回覆無法執行，請改用 [Claude 網頁版](claude-web.md)或 [Gemini 網頁版](gemini-web.md)。
+免費帳號即可使用：2026-11-25 以免費帳號實測，`sample.docx` 產出的 CSV 與 `sample.csv` 逐位元相同，並成功匯入題庫系統。
 
-免費帳號每天只能上傳 3 個檔案。
+免費帳號每天只能上傳 3 個檔案，每次轉換會用掉 2 個（ZIP 與考題）。
+
+若 ChatGPT 回覆無法執行 Python，請改用 [Claude 網頁版](claude-web.md)或 [Gemini 網頁版](gemini-web.md)。
 
 ## 使用
 
