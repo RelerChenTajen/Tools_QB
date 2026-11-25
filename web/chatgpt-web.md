@@ -13,7 +13,7 @@
 
 | 帳號 | 狀態 |
 |------|------|
-| Plus | 方式 A：2026-11-25 實測可建立私人外掛，產出結果尚未核對<br>方式 B：2026-11-25 實測，`sample.docx` 產出的 CSV 與 `sample.csv` 逐位元相同，並成功匯入題庫系統 |
+| Plus | 方式 A：2026-11-25 已建立私人外掛，建立時 ChatGPT 回報腳本可產出兩種編碼的 CSV；在新對話叫用並下載**尚未實測**<br>方式 B：2026-11-25 實測，`sample.docx` 產出的 CSV 與 `sample.csv` 逐位元相同，並成功匯入題庫系統 |
 | 免費帳號 | 尚未實測。方式 B 可以上傳檔案，但每天只能上傳 3 個，每次轉換會用掉 2 個（ZIP 與考題） |
 | 其他方案 | 尚未實測 |
 
@@ -27,24 +27,33 @@
 
 ### 建立外掛（只需一次）
 
-建立步驟依官方說明整理，第 4 步的提示詞尚未實測；使用步驟由實際使用者提供。
-
-1. 下載 [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip)，**不要解壓縮**。
-2. 登入 <https://chatgpt.com> 的**個人帳號與個人工作區**。
-3. 按側邊欄「**外掛程式**」（Plugins）→「**新增（＋）**」，會開啟與「**外掛程式建立工具**」（Plugin Creator）的對話。
-   沒有這個工具時，先從外掛程式目錄安裝，再開對話輸入 `@plugin-creator`。
-4. 附上 `exam-to-qb.zip`，輸入：
+1. 下載 [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip)（**不要解壓縮**）與範例 [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx)。
+   ZIP 的內容：
+   ```text
+   exam-to-qb/
+     SKILL.md
+     build.py
+     extract.py
+     header.csv
    ```
-   請建立一個只給我自己使用的私人外掛，名稱為「考題轉題庫 CSV」。
-   附件 exam-to-qb.zip 是現成的技能，請把 SKILL.md、build.py、extract.py、header.csv 原封不動放進外掛的技能資料夾，不要改寫、精簡或重新產生。
-   使用這個外掛時，要實際執行 build.py 產生 CSV。
+2. 登入 <https://chatgpt.com> 的**個人帳號與個人工作區**，開啟 ChatGPT Work。
+3. 在輸入框附上 `exam-to-qb.zip` 和 `sample.docx`，再輸入 `@`，選取 **Plugin Creator**（外掛程式建立工具）。
+   找不到時，先到側邊欄「**外掛程式**」（Plugins）的目錄安裝。
+4. 在同一則訊息輸入並送出：
+   ```
+   請將我上傳的 Skill ZIP 封裝成私人外掛，顯示名稱為「考題轉題庫 CSV」。
+   SKILL.md、Python 腳本和 header.csv 請原封不動保留，不要改寫、精簡或重新產生。
+   建立前請用 sample.docx 實際執行轉換，確認能輸出 UTF-8 無 BOM 與 Big5（CP950）兩版 CSV。
+   建立後請提供外掛連結。
    ```
    > 「不要改寫」很重要：ChatGPT 曾自行重寫程式與表頭，產出就不再與正本一致。
-5. 依畫面完成。若出現「**安裝外掛程式**」（Install plugin），按下安裝。
+5. Plugin Creator 會把技能和支援檔放進 `skills/exam-to-qb/`，產生 `plugin.json`，建立為私人外掛，存在您的**個人帳號**。
+6. 開啟它提供的外掛連結；若顯示「**安裝外掛程式**」（Install plugin），按下安裝。
+   外掛連結屬於個人，請不要公開張貼。
 
 ### 使用外掛
 
-1. 在 ChatGPT Work 的輸入框附上考題檔，例如 `sample.docx`。
+1. 在 ChatGPT Work **開新對話**，附上考題檔，例如 `sample.docx`。
 2. 在同一則訊息輸入 `@`，搜尋並點選「**考題轉題庫 CSV**」。也可以從輸入框的「**＋**」選單選取外掛。
 3. 接著輸入並送出：
    ```
@@ -57,7 +66,7 @@
 
 ### 更新外掛
 
-技能更新時，輸入 `@plugin-creator`，附上新的 `exam-to-qb.zip`，說明「請用附件更新『考題轉題庫 CSV』外掛，檔案原封不動取代」。更新後用 `sample.docx` 再驗證一次。
+技能更新時，在 Work 輸入 `@` 選 **Plugin Creator**，附上新的 `exam-to-qb.zip`，說明「請用附件更新『考題轉題庫 CSV』外掛，檔案原封不動取代」。更新後用 `sample.docx` 再驗證一次。
 
 ## 方式 B：附件
 
@@ -92,7 +101,7 @@
 
 | 狀況 | 處理 |
 |------|------|
-| 找不到「外掛程式」或「外掛程式建立工具」 | 帳號方案或工作區未開放；改用方式 B |
+| 找不到「外掛程式」或 Plugin Creator | 帳號方案或工作區未開放；改用方式 B |
 | 外掛產出的內容與 `sample.csv` 不同 | 外掛裡的檔案可能被改寫；依〈更新外掛〉重新放入 ZIP |
 | 上傳數量已達上限 | 免費帳號每天 3 個；改天再試，或改用其他網頁版 |
 | 找不到 `header.csv` | 提示「執行 build.py 時用 `--header` 指定 header.csv 的實際路徑」 |
