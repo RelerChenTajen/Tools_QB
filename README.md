@@ -166,7 +166,7 @@ git clone https://github.com/RelerChenTajen/Tools_QB.git
 cd Tools_QB/skill
 ```
 
-**Claude Code、Codex、Gemini CLI**
+一行指令同時安裝到 Claude Code、Codex、Antigravity 與 Gemini CLI：
 
 ```powershell
 # Windows
@@ -183,19 +183,6 @@ cd Tools_QB/skill
 ```
 
 Windows 若顯示無法執行指令碼，改用 `powershell -ExecutionPolicy Bypass -File .\install.ps1`。
-
-**Antigravity**（安裝腳本尚未支援，手動複製）
-
-```powershell
-# Windows
-New-Item -ItemType Directory -Force "$env:USERPROFILE\.gemini\config\skills" | Out-Null
-Copy-Item -Recurse -Force exam-to-qb "$env:USERPROFILE\.gemini\config\skills\"
-```
-
-```bash
-# macOS / Linux
-mkdir -p ~/.gemini/config/skills && cp -R exam-to-qb ~/.gemini/config/skills/
-```
 
 <details>
 <summary><b>技能放在哪裡、兩種安裝模式的差別</b></summary>
@@ -295,7 +282,7 @@ python skill/exam-to-qb/build.py --tsv rows.tsv --out 題庫/my_exam.csv --allow
 
 | 使用方式 | 更新方法 |
 |----------|----------|
-| CLI、VS Code（複製模式） | `git pull` 後重跑安裝腳本；Antigravity 重新複製 |
+| CLI、VS Code（複製模式） | `git pull` 後重跑安裝腳本 |
 | CLI、VS Code（連結模式） | `git pull` 即可 |
 | Claude、Gemini 網頁版 | 刪除舊技能，重新上傳 ZIP |
 | ChatGPT 私人外掛 | 用 Plugin Creator 以新 ZIP 更新 |

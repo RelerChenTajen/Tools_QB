@@ -3,6 +3,7 @@
 #
 #   ~/.claude/skills/exam-to-qb   Claude Code
 #   ~/.agents/skills/exam-to-qb   OpenAI Codex, Gemini CLI (shared interop path)
+#   ~/.gemini/config/skills/exam-to-qb   Google Antigravity (IDE, App, CLI)
 #
 # Default is copy mode. Pass --link to symlink back at this repo instead, so
 # `git pull` updates the skill in place with no re-install.
@@ -26,7 +27,8 @@ REPO_SKILL="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/exam-to-qb"
 [ -f "$REPO_SKILL/SKILL.md" ] || { echo "找不到 $REPO_SKILL/SKILL.md" >&2; exit 1; }
 
 for spec in "Claude Code:$HOME/.claude/skills/exam-to-qb" \
-            "Codex / Gemini CLI:$HOME/.agents/skills/exam-to-qb"; do
+            "Codex / Gemini CLI:$HOME/.agents/skills/exam-to-qb" \
+            "Antigravity:$HOME/.gemini/config/skills/exam-to-qb"; do
   name="${spec%%:*}"
   dest="${spec#*:}"
   echo "--- $name"

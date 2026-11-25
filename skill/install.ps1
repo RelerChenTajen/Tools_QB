@@ -2,6 +2,7 @@
 #
 #   ~/.claude/skills/exam-to-qb   Claude Code
 #   ~/.agents/skills/exam-to-qb   OpenAI Codex, Gemini CLI (shared interop path)
+#   ~/.gemini/config/skills/exam-to-qb   Google Antigravity (IDE, App, CLI)
 #
 # Default is Copy mode (safe, works everywhere). Use -Link to create directory
 # junctions pointing back at this repo instead, so `git pull` updates the skill
@@ -23,7 +24,8 @@ if (-not (Test-Path (Join-Path $repoSkill "SKILL.md"))) {
 
 $targets = @(
   @{ Name = "Claude Code";        Path = Join-Path $env:USERPROFILE ".claude\skills\exam-to-qb" },
-  @{ Name = "Codex / Gemini CLI"; Path = Join-Path $env:USERPROFILE ".agents\skills\exam-to-qb" }
+  @{ Name = "Codex / Gemini CLI"; Path = Join-Path $env:USERPROFILE ".agents\skills\exam-to-qb" },
+  @{ Name = "Antigravity";        Path = Join-Path $env:USERPROFILE ".gemini\config\skills\exam-to-qb" }
 )
 
 foreach ($t in $targets) {
