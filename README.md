@@ -64,17 +64,19 @@ flowchart LR
 
 三家網頁版都已實測：以 `sample.docx` 產生 CSV，並成功匯入題庫系統（2026-11-25）。
 
-| | Claude Web | ChatGPT Web | Gemini Web |
-|---|---|---|---|
-| 使用方式 | 安裝技能一次 | 建立私人外掛一次（Plus），或每次附上 ZIP 與考題 | 安裝技能一次 |
-| 已實測的帳號 | 付費帳號 | Plus | 個人 Google 帳號 |
-| 尚未實測的帳號 | 免費帳號（官方說明可用） | 免費與其他方案 | 學校帳號（尚未開放技能） |
-| CSV 由誰產生 | `build.py` | `build.py` | AI 直接寫出 |
-| 格式錯誤檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
-| Big5 版 | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | 用記事本另存 ANSI（未實測） |
-| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 兩種方式都逐位元相同 | 各格內容相同 |
+| | Claude 技能 | ChatGPT 私人外掛 | ChatGPT 附件 | Gemini 技能 |
+|---|---|---|---|---|
+| 事前準備 | 安裝一次 | 建立一次 | 不用 | 安裝一次 |
+| 每次附上 | 考題 | 考題 | 考題與 ZIP | 考題 |
+| 已實測的帳號 | 付費帳號 | Plus | Plus | 個人 Google 帳號 |
+| 尚未實測的帳號 | 免費帳號（官方說明可用） | 其他方案 | 免費與其他方案 | 學校帳號（尚未開放技能） |
+| CSV 由誰產生 | `build.py` | `build.py` | `build.py` | AI 直接寫出 |
+| 格式錯誤檢查 | 程式檢查 | 程式檢查 | 程式檢查 | 沒有，要自己核對 |
+| Big5 版 | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | `build.py` 可產生（未留實測紀錄） | 用記事本另存 ANSI（未實測） |
+| 與 `sample.csv` 比對 | 只差第 8 題 2 個空白 | 逐位元相同 | 逐位元相同 | 各格內容相同 |
 
 - **有個人 Google 帳號**：用 Gemini Web，匯入前請逐題核對。
+- **有 ChatGPT Plus**：常用就建立私人外掛，偶爾用就附 ZIP。
 - **重要考試或需要格式檢查**：用 Claude Web（付費帳號）、ChatGPT Web（Plus）或本機工具。
 - **要批次處理或維護本專案**：用本機工具，見〈技能安裝與同步〉。
 
@@ -82,7 +84,7 @@ flowchart LR
 
 不綁單一廠商——換工具不必重做，轉換規則與輸出格式都相同。
 
-技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP 即可（見〈技能安裝與同步〉）。
+技能正本就在本 repo 的 [`skill/exam-to-qb/`](skill/exam-to-qb/)，本機工具 clone 後執行一行安裝指令，網頁版上傳 ZIP（Claude、Gemini 安裝技能，ChatGPT 建立私人外掛或當附件）即可（見〈技能安裝與同步〉）。
 
 ---
 
@@ -165,12 +167,18 @@ flowchart LR
 | AI 網頁版 | 上傳用的 ZIP（不要解壓縮） | 步驟 |
 |-----------|---------------------------|----------|
 | Claude | [`exam-to-qb.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb.zip) | [claude-web.md](web/claude-web.md) |
-| ChatGPT（建立私人外掛，或每次附上） | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
+| ChatGPT（用 Plugin Creator 建立私人外掛，或每次附上） | 同上 | [chatgpt-web.md](web/chatgpt-web.md) |
 | Gemini | [`exam-to-qb-gemini.zip`](https://github.com/RelerChenTajen/Tools_QB/raw/main/web/dist/exam-to-qb-gemini.zip) | [gemini-web.md](web/gemini-web.md) |
 
 不要用 GitHub 的「Download ZIP」，那是整個專案，不是技能安裝檔。
 
-**使用前先驗證**：用 `sample.docx` 轉一次，CSV 第一列應以 `version: 4` 開頭。Gemini 若不是，請刪除技能重新建立。
+**使用前先驗證**：用 `sample.docx` 轉一次，與[範例對照表](web/README.md#範例對照表)比對，CSV 第一列應以 `version: 4` 開頭。結果不對時：
+
+| AI 網頁版 | 處理 |
+|-----------|------|
+| Claude | 提示詞寫明「請使用 exam-to-qb 技能」，仍不對就刪除技能重新上傳 |
+| ChatGPT 私人外掛 | 外掛裡的檔案可能被改寫，用 Plugin Creator 重新放入 ZIP，要求原封不動 |
+| Gemini | 刪除技能重新建立 |
 
 ### 本機工具：安裝位置
 
@@ -223,7 +231,7 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 1. 改 `skill/exam-to-qb/` 底下的檔案（正本）
 2. commit + push
 3. 複製模式：重跑安裝腳本；連結模式：不必做任何事
-4. 網頁版：執行 `python web/pack.py` 重新打包並 commit + push，再通知使用者重新上傳（網頁版不會自動更新；Gemini 請先刪除舊技能）
+4. 網頁版：執行 `python web/pack.py` 重新打包並 commit + push，再通知使用者更新（網頁版不會自動更新）：Claude、Gemini 刪除舊技能後重新上傳，ChatGPT 私人外掛用 Plugin Creator 更新，附件方式改附新的 ZIP
 
 ### 本機工具：技能目錄對照
 
