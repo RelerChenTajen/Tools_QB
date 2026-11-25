@@ -26,7 +26,7 @@
    請把附件轉成題庫 CSV，類別：資訊安全
    ```
    不需要類別就省略「，類別：資訊安全」。
-3. 下載 Gemini 產生的 `.csv`。
+3. 下載 Gemini 產生的 `.csv`。用記事本開啟，第一列應為 `version: 4` 開頭；不是的話，見[常見問題](#常見問題)第一項。
 4. 看完 Gemini 回報的疑問題號，依[匯入前檢查](README.md#匯入前檢查)核對後再匯入。
 
 ### 沒有檔案，或下載連結打不開
@@ -57,6 +57,7 @@
 
 | 狀況 | 處理 |
 |------|------|
+| CSV 第一列不是 `version: 4`，或無法匯入 | 技能沒有生效。到 Skills 刪除技能（**More > Delete**），依安裝步驟重新建立（實測有效），建議開**新對話**重做 |
 | Gemini 說不支援執行程式或腳本 | 安裝到舊版；刪除技能後，下載新的 ZIP 重新上傳 |
 | 找不到 Customize 或 Skills | 可能是學校帳號、未滿 18 歲，或尚未登入 |
 | 上傳失敗 | 確認用的是 `exam-to-qb-gemini.zip`，且沒有解壓後重壓 |
@@ -75,4 +76,4 @@ Gemini 版的 CSV 由 AI 直接寫出，**沒有經過 `build.py` 的格式檢�
 - [Gemini 在對話中產生檔案](https://blog.google/innovation-and-ai/products/gemini-app/generate-files-in-gemini/)
 - [Attach & analyze files](https://support.google.com/gemini/answer/14903178)
 
-官方說明查證於 2026-11-25，選單名稱可能隨改版變動。官方未說明技能與產生檔案能否並用，不能時用上面的程式碼區塊做法。
+官方說明查證於 2026-11-25，選單名稱可能隨改版變動。官方未說明技能與產生檔案能否並用；2026-11-25 實測可產生 CSV 並匯入題庫系統。
