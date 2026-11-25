@@ -47,6 +47,7 @@ flowchart LR
 | [`sample.docx`](https://github.com/RelerChenTajen/Tools_QB/raw/main/sample.docx) | 範例考題，轉換的來源 |
 | [`sample.csv`](sample.csv) | 轉換成果（UTF-8 無 BOM，類別「資訊安全」） |
 | [`sample_big5.csv`](sample_big5.csv) | 轉換成果的 Big5 版 |
+| [`sample.tsv`](sample.tsv) | 中間檔，直接跑引擎時使用 |
 
 下面的操作都以 `sample.docx` 示範。本機工具輸出到 `題庫/sample.csv`，網頁版則下載產生的檔案，再與根目錄的 `sample.csv` 對照。
 各題的正確答案見[範例對照表](web/README.md#範例對照表)。
@@ -230,17 +231,17 @@ python ~/.agents/skills/exam-to-qb/build.py --help
 
 ## 直接用指令跑引擎（不透過 AI）
 
-題目已整理成 TSV 時，可以略過 AI 直接跑引擎。以下在 repo 根目錄執行，以技能附的 [`rows.sample.tsv`](skill/exam-to-qb/examples/rows.sample.tsv)（12 題）示範：
+題目已整理成 TSV 時，可以略過 AI 直接跑引擎。以下在 repo 根目錄執行，以範例檔示範：
 
 ```bash
 # 從 docx 取出純文字
 python skill/exam-to-qb/extract.py sample.docx -o 題庫/sample.txt
 
 # 全部同一個類別
-python skill/exam-to-qb/build.py --tsv skill/exam-to-qb/examples/rows.sample.tsv --out 題庫/my_exam.csv --category "綠色能源" --big5
+python skill/exam-to-qb/build.py --tsv sample.tsv --out 題庫/sample.csv --category "資訊安全" --big5
 
 # 與成果檔對照，沒有任何輸出就是完全相同
-git diff --no-index skill/exam-to-qb/examples/exam01.sample.csv 題庫/my_exam.csv
+git diff --no-index sample.csv 題庫/sample.csv
 ```
 
 其他用法：
@@ -272,6 +273,7 @@ python skill/exam-to-qb/build.py --tsv rows.tsv --out 題庫/my_exam.csv --allow
 QB/
 ├── README.md                 本說明
 ├── sample.docx               範例考題（資訊安全，9 題）
+├── sample.tsv                範例的 TSV 中間檔
 ├── sample.csv                範例轉換成果（UTF-8 no BOM）
 ├── sample_big5.csv           範例轉換成果 Big5 版
 ├── template/                 題庫系統的 CSV 範本 exam.csv 與 Big5 版
